@@ -1,4 +1,10 @@
-import { UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types';
+import { User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types';
+
+export function getUserFromID(id: string): User {
+    return {
+        id: id
+    }
+}
 
 export function getUserInfoFromContent(obj: any): UserInfo {
     const user = obj.userInfo.user;

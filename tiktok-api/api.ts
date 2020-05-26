@@ -186,9 +186,9 @@ async function getRecentVideoIDs(user: User): Promise<number[]> {
 const util = require('util');
 const zlib = require('zlib');
 const request = require('request');
-const signer = require('../tiktok-signer/signer');
 
 const get = util.promisify(request.get);
+const post = util.promisify(request.post);
 const gunzip = util.promisify(zlib.gunzip);
 
 const optionsTemplate = {
@@ -220,15 +220,18 @@ async function getBody(url: string) {
  * @param url the URL to retrieve content from
  */
 async function getTiktokContent(url: string) {
-    const signedURL = await signer.sign(url);
+    const signedURL = await sign(url);
     return getBody(signedURL);
 }
 
-async function main() {
-    await signer.init();
+/**
+ * Signs the TikTok url.
+ * @param url the URL to sign
+ */
+async function sign(url: string): Promise<string> {
+    const response = await post('http://localhost:4000/api/sign', { json: { url: url } });
+    return url + '&verifyFp=' + response.body.token + '&_signature=' + response.body.signature;
 }
-
-main();
 
 exports.getUser = getUser;
 exports.getUserVideos = getUserVideos;

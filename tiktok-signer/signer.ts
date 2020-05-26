@@ -2,6 +2,15 @@ const Signer = require('tiktok-signature');
 
 const signerSingleton = new Signer();
 
+main();
+
+/**
+ * Entry point to signature program.
+ */
+async function main() {
+    await init();
+}
+
 /**
  * Initiates the TikTok URL signer.
  */
@@ -17,15 +26,18 @@ async function close() {
 }
 
 /**
- * Signs the TikTok url.
- * @param url the URL to sign
+ * Gets the signature of the url.
  */
-async function sign(url: string): Promise<string> {
-    const signature = await signerSingleton.sign(url);
-    const token = await signerSingleton.getVerifyFp();
-    return url + '&verifyFp=' + token + '&_signature=' + signature;
+async function getSignature(url: string): Promise<string> {
+    return await signerSingleton.sign(url);
 }
 
-exports.init = init;
-exports.close = close;
-exports.sign = sign;
+/**
+ * Gets the verfication token of the url.
+ */
+async function getVerifyToken(): Promise<string> {
+    return await signerSingleton.getVerifyFp();
+}
+
+exports.getSignature = getSignature;
+exports.getVerifyToken = getVerifyToken;

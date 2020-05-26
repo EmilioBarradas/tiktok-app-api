@@ -43,7 +43,7 @@ export async function getVideoInfo(video: Video): Promise<VideoInfo> {
     const contentURL = url.getVideoInfoContentURL(video);
     const content = await utility.getTiktokContent(contentURL);
 
-    return constructor.getVideoInfoFromContent(content);
+    return constructor.getVideoInfoFromContent(content.itemInfo.itemStruct);
 }
 
 export function getAudio(id: string): Audio {

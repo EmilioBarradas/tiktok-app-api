@@ -43,7 +43,8 @@ export function getAudioInfoContentURL(audio: Audio): string {
         throw Error("Passed Audio must have an id set.");
     }
 
-    return 'https://m.tiktok.com/api/music/detail/?musicId=' + audio.id;
+    return 'https://m.tiktok.com/api/music/detail/?musicId=' + audio.id
+            + '&language=en';
 }
 
 export function getAudioTopContentURL(audio: Audio): string {
@@ -57,14 +58,16 @@ export function getAudioTopContentURL(audio: Audio): string {
 
 export function getTagInfoContentURL(identifier: Tag | string): string {
     if (typeof identifier === 'string') {
-        return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier;
+        return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier
+                + '&language=en';
     }
 
     if (typeof identifier.title === 'undefined') {
         throw Error("Passed Tag must have a title set.");
     }
 
-    return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier.title;
+    return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier.title
+            + '&language=en';
 }
 
 export function getTagTopContentURL(tag: Tag): string {

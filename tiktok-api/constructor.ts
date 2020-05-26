@@ -32,6 +32,8 @@ export function getVideoFromID(id: string): Video {
 }
 
 export function getVideoInfoFromContent(obj: any): VideoInfo {
+    const tags = typeof obj.challenges !== 'undefined' ? obj.challenges.map((t: object) => getTagFromContent(t)) : [];
+
     return {
         video: {
             id: obj.id,
@@ -45,7 +47,7 @@ export function getVideoInfoFromContent(obj: any): VideoInfo {
         commentCount: obj.stats.commentCount,
         shareCount: obj.stats.shareCount,
         description: obj.desc,
-        tags: obj.challenges.map((t: object) => getTagFromContent(t)),
+        tags: tags,
         audio: {
             audio: {
                 id: obj.music.id,
@@ -88,9 +90,9 @@ export function getAudioFromID(id: string): Audio {
 export function getAudioInfoFromContent(obj: any): AudioInfo {
     return {
         audio: {
-            id: obj.music.id,
+            id: obj.musicInfo.music.id,
         },
-        title: obj.music.title,
+        title: obj.musicInfo.music.title,
     }
 }
 

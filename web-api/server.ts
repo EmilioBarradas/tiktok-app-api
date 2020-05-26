@@ -13,7 +13,7 @@ app.get('/api/audio/:id', getAudioInfo);
 app.get('/api/audio/:id/videos', getAudioTopVideos);
 
 app.get('/api/tag/:id', getTagInfo);
-app.get('/api/tag/:id', getTagTopVideos);
+app.get('/api/tag/:id/videos', getTagTopVideos);
 
 app.listen(8000);
 
@@ -59,8 +59,7 @@ async function getAudioTopVideos(req, res) {
 }
 
 async function getTagInfo(req, res) {
-    const tag = await tiktok.getTag(req.params.id);
-    const tagInfo = await tiktok.getTagInfo(tag);
+    const tagInfo = await tiktok.getTagInfo(req.params.id);
 
     res.status(200).send(tagInfo).end();
 }

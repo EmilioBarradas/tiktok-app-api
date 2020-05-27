@@ -1,6 +1,27 @@
 # Unofficial Node TikTok API
 
+Table of Contents
+---
+* [Quick Examples](#Quick-Examples)
+* [Installation](#Installation)
+* [Usage](#Usage)
+  * [Trending](#Trending)
+  * [Users](#Users)
+  * [Videos](#Videos)
+  * [Audios](#Audios)
+  * [Tags](#Tags)
+* [Object Reference](#Object-Reference)
+  * [User](#User)
+  * [UserInfo](#UserInfo)
+  * [Video](#Video)
+  * [VideoInfo](#VideoInfo)
+  * [Audio](#Audio)
+  * [AudioInfo](#AudioInfo)
+  * [Tag](#Tag)
+  * [TagInfo](#TagInfo)
+
 Quick Examples
+---
 
 Get the follower count of a TikTok user:
 ```javascript
@@ -137,6 +158,8 @@ Just like Users and Videos, we first need an Audio object.
 ```javascript
 const audio = tiktok.getAudio('6829280451471969029');
 ```
+
+Take note that getAudio(id) does not return a promise, as it does not fetch any information from the TikTok API.
 
 To get the information related to the audio:
 

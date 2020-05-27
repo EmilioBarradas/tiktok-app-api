@@ -1,5 +1,7 @@
 import express = require('express');
 import tiktok = require('../tiktok-api/api');
+import { IllegalIdentifier } from '../tiktok-api/errors/IllegalIdentifier';
+import { ResourceNotFound } from '../tiktok-api/errors/ResourceNotFound';
 
 const app = express();
 
@@ -18,7 +20,13 @@ app.get('/api/tag/:id/videos', getTagTopVideos);
 app.listen(8000);
 
 async function getUserInfo(req, res) {
-    const userInfo = await tiktok.getUserInfo(req.params.identifier);
+    let userInfo;
+
+    try {
+        userInfo = await tiktok.getUserInfo(req.params.identifier);
+    } catch (err) {
+        handleError(err, res);
+    }
 
     res.status(200).send(userInfo).end();
 }
@@ -39,14 +47,26 @@ async function getLikedVideos(req, res) {
 
 async function getVideoInfo(req, res) {
     const video = await tiktok.getVideo(req.params.id);
-    const videoInfo = await tiktok.getVideoInfo(video);
+
+    let videoInfo;
+    try {
+        videoInfo = await tiktok.getVideoInfo(video);
+    } catch (err) {
+        handleError(err, res);
+    }
 
     res.status(200).send(videoInfo).end();
 }
 
 async function getAudioInfo(req, res) {
     const audio = await tiktok.getAudio(req.params.id);
-    const audioInfo = await tiktok.getAudioInfo(audio);
+
+    let audioInfo;
+    try {
+        audioInfo = await tiktok.getAudioInfo(audio);
+    } catch (err) {
+        handleError(err, res);
+    }
 
     res.status(200).send(audioInfo).end();
 }
@@ -59,7 +79,12 @@ async function getAudioTopVideos(req, res) {
 }
 
 async function getTagInfo(req, res) {
-    const tagInfo = await tiktok.getTagInfo(req.params.id);
+    let tagInfo;
+    try {
+        tagInfo = await tiktok.getTagInfo(req.params.id);
+    } catch (err) {
+        handleError(err, res);
+    }
 
     res.status(200).send(tagInfo).end();
 }
@@ -73,4 +98,19 @@ async function getTagTopVideos(req, res) {
 
 async function getUser(id: string) {
     return isNaN(Number(id)) ? await tiktok.getUserByName(id) : Promise.resolve(tiktok.getUserByID(id));
+}
+
+function handleError(err, res) {
+    let statusCode;
+
+    if (err instanceof IllegalIdentifier) {
+        statusCode = 400;
+    } else if (err instanceof ResourceNotFound) {
+        statusCode = 404;
+    }
+
+    const body = {
+        error: err.message,
+    }
+    res.status(statusCode).send(body).end();
 }

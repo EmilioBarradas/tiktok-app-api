@@ -1,0 +1,34 @@
+{
+    "name": "tiktok-app-api",
+    "version": "1.0.0",
+    "description": "Unofficial TikTok Node.js API",
+    "main": "dist/api.js",
+    "directories": {
+        "lib": "lib"
+    },
+    "scripts": {
+        "prepublish": "npm run build",
+        "build": "tsc",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TikStock/tiktok-app-api.git"
+    },
+    "keywords": [
+        "TikTok"
+    ],
+    "author": "EmilioBarradas",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/TikStock/tiktok-app-api/issues"
+    },
+    "homepage": "https://github.com/TikStock/tiktok-app-api#readme",
+    "devDependencies": {
+        "typescript": "^3.9.3"
+    },
+    "dependencies": {
+        "@types/request": "^2.48.5",
+        "request": "^2.88.2"
+    }
+}

@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@types/node": "^14.0.5",
-    "request": "^2.88.2"
-  }
-}

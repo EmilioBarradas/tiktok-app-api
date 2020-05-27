@@ -1,6 +1,11 @@
 import { User, Video, Audio, Tag } from './types';
-import { TYPE_RECENT_VIDEOS, TYPE_LIKED_VIDEOS, TYPE_TAG_VIDEOS, TYPE_AUDIO_VIDEOS } from './constants';
+import { TYPE_RECENT_VIDEOS, TYPE_LIKED_VIDEOS, TYPE_TAG_VIDEOS, TYPE_AUDIO_VIDEOS, TYPE_TRENDING_VIDEOS } from './constants';
 import { IllegalArgument } from './errors/IllegalArgument';
+
+export function getTrendingContentURL() {
+    return 'https://m.tiktok.com/api/item_list/?count=30&id=1&type='
+            + TYPE_TRENDING_VIDEOS + '&secUid=&maxCursor=0&minCursor=0&sourceType=12&appId=1233';
+}
 
 export function getUserInfoContentURL(identifier: User | string): string {
     if (typeof identifier === 'string') {

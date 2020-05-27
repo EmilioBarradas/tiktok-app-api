@@ -8,6 +8,16 @@ import url = require('./url');
 import constructor = require('./constructor');
 
 /**
+ * Retrieves the top trending videos on TikTok. Currently returns a maximum of 30 videos.
+ */
+export async function getTrendingVideos(): Promise<VideoInfo[]> {
+    const contentURL = url.getTrendingContentURL();
+    const content = await utility.getTiktokContent(contentURL);
+
+    return content.items.map((v: object) => constructor.getVideoInfoFromContent(v));
+}
+
+/**
  * @param username The username of the TikTok user.
  * @returns A promise with the resolved value of a User object.
  * @throws {IllegalIdentifier} Thrown if the username is invalid.

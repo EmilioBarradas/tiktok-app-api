@@ -1,4 +1,6 @@
-# Unofficial Node TikTok API
+# TikTok API
+
+This is an unofficial Node.js implementation of the TikTok API. This module is not endorsed by, directly affiliated with, maintained, authorized, or sponsored by TikTok. Their internal API could change at any moment, and break this module's code. I try my best to maintain it, and keep it up-to-date. If you find bugs or have any questions, please submit an issue, and I will try my best to help you out.
 
 Table of Contents
 ---
@@ -81,7 +83,7 @@ To retrieve User information within the API, you will first need to get a User o
 
 Get a User object from a TikTok user's username:
 
-Will fetch ID of user from TikTok API. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L10).
+Will fetch ID of user from TikTok API. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L10).
 
 ```javascript
 const user = await tiktok.getUserByName('example');
@@ -99,7 +101,7 @@ Take note that getUserByID(id) does not return a promise, as it does not fetch a
 
 Now that we have a User object, we can retrieve some information from the TikTok user:
 
-See [UserInfo](#UserInfo) for a defintion of the UserInfo object. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L30).
+See [UserInfo](#UserInfo) for a defintion of the UserInfo object. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L30).
 
 ```javascript
 const userInfo = await tiktok.getUserInfo(user);
@@ -109,7 +111,7 @@ console.log(userInfo.followingCount, userInfo.followerCount, userInfo.likeCount)
 
 Now, let's get the user's lastest videos:
 
-See [VideoInfo](#VideoInfo) for a definition of the VideoInfo object. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L51).
+See [VideoInfo](#VideoInfo) for a definition of the VideoInfo object. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L51).
 
 ```javascript
 const recentVideos = await tiktok.getRecentVideos(user);
@@ -119,7 +121,7 @@ console.log(recentVideos[0].description, recentVideos[0].playCount, recentVideos
 
 Same idea, we can get the user's liked videos:
 
-May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L69).
+May throw an error in certain situations, see [here](./tiktok-api/api.ts#L69).
 
 ```javascript
 const likedVideos = await tiktok.getLikedVideos(user);
@@ -141,7 +143,7 @@ Take note that getVideo(id) does not return a promise, as it does not fetch any 
 
 Now to get the information of this video:
 
-May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L95).
+May throw an error in certain situations, see [here](./tiktok-api/api.ts#L95).
 
 ```javascript
 const videoInfo = await tiktok.getVideoInfo(video);
@@ -163,7 +165,7 @@ Take note that getAudio(id) does not return a promise, as it does not fetch any 
 
 To get the information related to the audio:
 
-See [AudioInfo](#AudioInfo) for a definition of the AudioInfo object. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L124).
+See [AudioInfo](#AudioInfo) for a definition of the AudioInfo object. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L124).
 
 ```javascript
 const audioInfo = await tiktok.getAudioInfo(audio);
@@ -173,7 +175,7 @@ console.log(audioInfo.title, audioInfo.audio.title);
 
 To get the top videos related to an audio:
 
-The first object of this VideoInfo array will be the original video with the audio. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L145).
+The first object of this VideoInfo array will be the original video with the audio. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L145).
 
 ```javascript
 const topVideos = await tiktok.getAudioTopVideos(audio);
@@ -187,7 +189,7 @@ Finally we have TikTok tags.
 
 Just like Users, Videos, and Audios, we need a Tag object.
 
-Will fetch the title from the TikTok API, therefore this function returns a promise. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L158).
+Will fetch the title from the TikTok API, therefore this function returns a promise. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L158).
 
 ```javascript
 const tag = await tiktok.getTag('fyp');
@@ -195,7 +197,7 @@ const tag = await tiktok.getTag('fyp');
 
 To retrieve the information associated with the tag:
 
-See [TagInfo](#TagInfo) for a definition of the TagInfo object. May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L169).
+See [TagInfo](#TagInfo) for a definition of the TagInfo object. May throw an error in certain situations, see [here](./tiktok-api/api.ts#L169).
 
 ```javascript
 const tagInfo = await tiktok.getTagInfo(tag);
@@ -205,7 +207,7 @@ console.log(tagInfo.description, tagInfo.videoCount, tagInfo.viewCount);
 
 To get the top videos of a tag:
 
-May throw an error in certain situations, see [here](https://github.com/EmilioBarradas/TikStock/blob/master/tiktok-api/api.ts#L187).
+May throw an error in certain situations, see [here](./tiktok-api/api.ts#L187).
 
 ```javascript
 const topVideos = await tiktok.getTagTopVideos(tag);

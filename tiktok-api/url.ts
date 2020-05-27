@@ -1,4 +1,6 @@
 import { User, Video, Audio, Tag } from './types';
+import { TYPE_RECENT_VIDEOS, TYPE_LIKED_VIDEOS, TYPE_TAG_VIDEOS, TYPE_AUDIO_VIDEOS } from './constants';
+import { IllegalArgument } from './errors/IllegalArgument';
 
 export function getUserInfoContentURL(identifier: User | string): string {
     if (typeof identifier === 'string') {
@@ -6,7 +8,7 @@ export function getUserInfoContentURL(identifier: User | string): string {
     }
 
     if (typeof identifier.username === 'undefined') {
-        throw Error("Passed User must have a username set.");
+        throw new IllegalArgument("Passed User must have a username set.");
     }
 
     return 'https://m.tiktok.com/api/user/detail/?uniqueId=' + identifier.username;
@@ -14,25 +16,25 @@ export function getUserInfoContentURL(identifier: User | string): string {
 
 export function getRecentVideosContentURL(user: User): string {
     if (typeof user.id === 'undefined') {
-        throw Error("Passed User must have an id set.");
+        throw new IllegalArgument("Passed User must have an id set.");
     }
 
     return 'https://m.tiktok.com/api/item_list/?count=30&id=' + user.id 
-            + '&type=1&secUid=&maxCursor=0&minCursor=0&sourceType=8&appId=1233';
+            + '&type=' + TYPE_RECENT_VIDEOS + '&secUid=&maxCursor=0&minCursor=0&sourceType=8&appId=1233';
 }
 
 export function getLikedVideosContentURL(user: User): string {
     if (typeof user.id === 'undefined') {
-        throw Error("Passed User must have an id set.");
+        throw new IllegalArgument("Passed User must have an id set.");
     }
 
     return 'https://m.tiktok.com/api/item_list/?count=30&id=' + user.id 
-            + '&type=2&secUid=&maxCursor=0&minCursor=0&sourceType=9&appId=1233';
+            + '&type=' + TYPE_LIKED_VIDEOS + '&secUid=&maxCursor=0&minCursor=0&sourceType=9&appId=1233';
 }
 
 export function getVideoInfoContentURL(video: Video): string {
     if (typeof video.id === 'undefined') {
-        throw Error("Passed Video must have an id set.");
+        throw new IllegalArgument("Passed Video must have an id set.");
     }
 
     return 'https://m.tiktok.com/api/item/detail/?itemId=' + video.id;
@@ -40,7 +42,7 @@ export function getVideoInfoContentURL(video: Video): string {
 
 export function getAudioInfoContentURL(audio: Audio): string {
     if (typeof audio.id === 'undefined') {
-        throw Error("Passed Audio must have an id set.");
+        throw new IllegalArgument("Passed Audio must have an id set.");
     }
 
     return 'https://m.tiktok.com/api/music/detail/?musicId=' + audio.id
@@ -49,11 +51,11 @@ export function getAudioInfoContentURL(audio: Audio): string {
 
 export function getAudioTopContentURL(audio: Audio): string {
     if (typeof audio.id === 'undefined') {
-        throw Error("Passed Audio must have an id set.");
+        throw new IllegalArgument("Passed Audio must have an id set.");
     }
 
     return 'https://m.tiktok.com/share/item/list?secUid=&id=' + audio.id 
-            + '&type=4&count=30&minCursor=0&maxCursor=0&shareUid=';
+            + '&type=' + TYPE_AUDIO_VIDEOS + '&count=30&minCursor=0&maxCursor=0&shareUid=';
 }
 
 export function getTagInfoContentURL(identifier: Tag | string): string {
@@ -63,7 +65,7 @@ export function getTagInfoContentURL(identifier: Tag | string): string {
     }
 
     if (typeof identifier.title === 'undefined') {
-        throw Error("Passed Tag must have a title set.");
+        throw new IllegalArgument("Passed Tag must have a title set.");
     }
 
     return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier.title
@@ -72,9 +74,9 @@ export function getTagInfoContentURL(identifier: Tag | string): string {
 
 export function getTagTopContentURL(tag: Tag): string {
     if (typeof tag.id === 'undefined') {
-        throw Error("Passed Tag must have an id set.");
+        throw new IllegalArgument("Passed Tag must have an id set.");
     }
 
     return 'https://m.tiktok.com/share/item/list?secUid=&id=' + tag.id
-            + '&type=3&count=30&minCursor=0&maxCursor=0&shareUid=';
+            + '&type=' + TYPE_TAG_VIDEOS + '&count=30&minCursor=0&maxCursor=0&shareUid=';
 }

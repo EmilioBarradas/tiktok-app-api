@@ -3,6 +3,7 @@
     "version": "1.0.2",
     "description": "Unofficial TikTok Node.js API",
     "main": "dist/tiktok.js",
+    "types": "dist/tiktok.d.ts",
     "directories": {
         "lib": "lib"
     },

@@ -50,7 +50,7 @@ console.log(trendingVideos[0].tags);
 Installation
 ---
 
-You must install puppeteer in order to run the API. Although, take a look at [TikTok-Web-API](https://github.com/EmilioBarradas/TikTok-Web-Api) to run this module as a web service.
+You must install puppeteer in order to run the API. Although, take a look at [TikTok-Web-API](https://github.com/TikStock/tiktok-web-api-example) to run this module as a web service.
 
 Install the api:
 

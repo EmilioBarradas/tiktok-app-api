@@ -1,6 +1,6 @@
 {
     "name": "tiktok-app-api",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Unofficial TikTok Node.js API",
     "main": "dist/tiktok.js",
     "types": "dist/tiktok.d.ts",

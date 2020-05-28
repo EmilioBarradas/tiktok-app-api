@@ -21,6 +21,13 @@ app.init = async function() {
 }
 
 /**
+ * Shuts down the application.
+ */
+app.close = function() {
+    this.signer.close();
+}
+
+/**
  * Sets the options that should be used within the application.
  * @param options The TikTokOptions object to use.
  * @throws {InvalidOptions} Thrown if the passed options are improperly configured.

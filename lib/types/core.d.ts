@@ -55,6 +55,10 @@ interface TagInfo {
     viewCount: number,
 }
 
+interface Signer {
+    close(): void;
+}
+
 export interface TikTok {
     /**
      * Settings used by the application.
@@ -65,13 +69,18 @@ export interface TikTok {
      * Signer object used to sign URLs if the program does not use an external signature service.
      * @private
      */
-    signer: object;
+    signer: Signer;
 
     /**
      * Initializes the default settings of the application.
      * @private
      */
     init(): void;
+
+    /**
+     * Shuts down the application.
+     */
+    close(): void;
 
     /**
      * Sets the options that should be used within the application.
@@ -211,4 +220,12 @@ export interface TikTok {
      * @private
      */
     sign: Function;
+
+    IllegalArgument: Function,
+
+    IllegalIdentifier: Function,
+
+    IllegalOptions: Function,
+
+    ResourceNotFound: Function,
 }

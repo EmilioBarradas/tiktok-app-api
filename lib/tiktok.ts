@@ -2,6 +2,7 @@ import { TikTok } from './types/core';
 import { app } from './app';
 import { utility } from './utility';
 import { signer } from './signer';
+import { error } from './errors/error';
 
 import merge = require('merge-descriptors');
 
@@ -13,6 +14,7 @@ async function tiktok(): Promise<TikTok> {
     merge(newApp, app);
     merge(newApp, utility);
     merge(newApp, signer);
+    merge(newApp, error);
 
     await newApp.init();
 

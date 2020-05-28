@@ -2,13 +2,13 @@
     "name": "tiktok-app-api",
     "version": "1.0.0",
     "description": "Unofficial TikTok Node.js API",
-    "main": "dist/api.js",
+    "main": "dist/tiktok.js",
     "directories": {
         "lib": "lib"
     },
     "scripts": {
         "prepare": "npm run build",
-        "build": "tsc",
+        "build": "rimraf dist && tsc && copy lib\\**.d.ts dist",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -25,10 +25,13 @@
     },
     "homepage": "https://github.com/TikStock/tiktok-app-api#readme",
     "devDependencies": {
+        "@types/merge-descriptors": "^1.0.1",
+        "@types/request": "^2.48.5",
         "typescript": "^3.9.3"
     },
     "dependencies": {
-        "@types/request": "^2.48.5",
-        "request": "^2.88.2"
+        "merge-descriptors": "^1.0.1",
+        "request": "^2.88.2",
+        "tiktok-signature": "^1.1.3"
     }
 }

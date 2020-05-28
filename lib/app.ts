@@ -1,20 +1,47 @@
-import { User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types';
+import { TikTok, TikTokOptions, User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types';
 import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND } from './constants';
+import { IllegalOptions } from './errors/IllegalOptions';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';
 import { ResourceNotFound } from './errors/ResourceNotFound';
+import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL, 
+         getLikedVideosContentURL, getVideoInfoContentURL, getAudioInfoContentURL, 
+         getAudioTopContentURL, getTagInfoContentURL, getTagTopContentURL } from './url';
+import { getVideoInfoFromContent, getUserFromID, getUserInfoFromContent, 
+         getVideoFromID, getAudioFromID, getAudioInfoFromContent, 
+         getTagInfoFromContent, getVideoInfoFromTopContent } from './constructor';
 
-import utility = require('./utility');
-import url = require('./url');
-import constructor = require('./constructor');
+export const app = {} as TikTok;
+
+/**
+ * Initializes the default settings of the application.
+ */
+app.init = async function() {
+    this.options = {};
+    this.signer = await this.getNewSigner();
+}
+
+/**
+ * Sets the options that should be used within the application.
+ * @param options The TikTokOptions object to use.
+ * @throws {InvalidOptions} Thrown if the passed options are improperly configured.
+ */
+app.useOptions = function(options: TikTokOptions) {
+    if (options == null) {
+        throw new IllegalOptions('Improperly configured options. Cannot set them to null.');
+    }
+
+    this.options = options;
+}
 
 /**
  * Retrieves the top trending videos on TikTok. Currently returns a maximum of 30 videos.
+ * @returns A promise with the resolved value of an array of VideoInfo objects.
  */
-export async function getTrendingVideos(): Promise<VideoInfo[]> {
-    const contentURL = url.getTrendingContentURL();
-    const content = await utility.getTiktokContent(contentURL);
+app.getTrendingVideos = async function(): Promise<VideoInfo[]> {
+    const contentURL = getTrendingContentURL();
+    const content = await this.getTiktokContent(contentURL);
 
-    return content.items.map((v: object) => constructor.getVideoInfoFromContent(v));
+    return content.items.map((v: object) => getVideoInfoFromContent(v));
 }
 
 /**
@@ -23,8 +50,8 @@ export async function getTrendingVideos(): Promise<VideoInfo[]> {
  * @throws {IllegalIdentifier} Thrown if the username is invalid.
  * @throws {ResourceNotFound} Thrown if a User with the username is not found.
  */
-export async function getUserByName(username: string): Promise<User> {
-    const userInfo = await getUserInfo(username);
+app.getUserByName = async function(username: string): Promise<User> {
+    const userInfo = await this.getUserInfo(username);
 
     return userInfo.user;
 }
@@ -33,8 +60,8 @@ export async function getUserByName(username: string): Promise<User> {
  * @param id The unique ID of the TikTok user.
  * @returns A User object with a set id property. Will not fetch the username of the TikTok user.
  */
-export function getUserByID(id: string): User {
-    return constructor.getUserFromID(id);
+app.getUserByID = function(id: string): User {
+    return getUserFromID(id);
 }
 
 /**
@@ -45,9 +72,9 @@ export function getUserByID(id: string): User {
  * @throws {ResourceNotFound} Thrown if a User with the username is not found.
  * @throws {IllegalArgument} Thrown if the User object, if one was passed, does not have it's username property set. 
  */
-export async function getUserInfo(identifier: User | string): Promise<UserInfo> {
-    const contentURL = url.getUserInfoContentURL(identifier);
-    const content = await utility.getTiktokContent(contentURL);
+app.getUserInfo = async function(identifier: User | string): Promise<UserInfo> {
+    const contentURL = getUserInfoContentURL(identifier);
+    const content = await this.getTiktokContent(contentURL);
 
     if (content.statusCode === ILLEGAL_IDENTIFIER) {
         throw new IllegalIdentifier("An illegal identifier was used for this request.");
@@ -55,7 +82,7 @@ export async function getUserInfo(identifier: User | string): Promise<UserInfo> 
         throw new ResourceNotFound("Could not find a User with the given identifier.");
     }
 
-    return constructor.getUserInfoFromContent(content);
+    return getUserInfoFromContent(content);
 }
 
 /**
@@ -65,15 +92,15 @@ export async function getUserInfo(identifier: User | string): Promise<UserInfo> 
  *          The resolved value will be an empty array if none videos are found.
  * @throws {IllegalArgument} Thrown if the User object does not have it's id property set.
  */
-export async function getRecentVideos(user: User): Promise<VideoInfo[]> {
-    const contentURL = url.getRecentVideosContentURL(user);
-    const content = await utility.getTiktokContent(contentURL);
+app.getRecentVideos = async function(user: User): Promise<VideoInfo[]> {
+    const contentURL = getRecentVideosContentURL(user);
+    const content = await this.getTiktokContent(contentURL);
 
     if (typeof content.items === 'undefined') {
         return [];
     }
 
-    return content.items.map((v: object) => constructor.getVideoInfoFromContent(v));
+    return content.items.map((v: object) => getVideoInfoFromContent(v));
 }
 
 /**
@@ -83,23 +110,23 @@ export async function getRecentVideos(user: User): Promise<VideoInfo[]> {
  *          The resolved value will be an empty array if none videos are found.
  * @throws {IllegalArgument} Thrown if the User object does not have it's id property set.
  */
-export async function getLikedVideos(user: User): Promise<VideoInfo[]> {
-    const contentURL = url.getLikedVideosContentURL(user);
-    const content = await utility.getTiktokContent(contentURL);
+app.getLikedVideos = async function(user: User): Promise<VideoInfo[]> {
+    const contentURL = getLikedVideosContentURL(user);
+    const content = await this.getTiktokContent(contentURL);
 
     if (typeof content.items === 'undefined') {
         return [];
     }
 
-    return content.items.map((v: object) => constructor.getVideoInfoFromContent(v));
+    return content.items.map((v: object) => getVideoInfoFromContent(v));
 }
 
 /**
  * @param id The unique ID of the TikTok video.
  * @returns A Video object with a set id property.
  */
-export function getVideo(id: string): Video {
-    return constructor.getVideoFromID(id);
+app.getVideo = function(id: string): Video {
+    return getVideoFromID(id);
 }
 
 /**
@@ -110,9 +137,9 @@ export function getVideo(id: string): Video {
  * @throws {ResourceNotFound} Thrown if a Video with the id is not found.
  * @throws {IllegalArgument} Thrown if the Video object does not have it's id property set. 
  */
-export async function getVideoInfo(video: Video): Promise<VideoInfo> {
-    const contentURL = url.getVideoInfoContentURL(video);
-    const content = await utility.getTiktokContent(contentURL);
+app.getVideoInfo = async function(video: Video): Promise<VideoInfo> {
+    const contentURL = getVideoInfoContentURL(video);
+    const content = await this.getTiktokContent(contentURL);
 
     if (content.statusCode === ILLEGAL_IDENTIFIER) {
         throw new IllegalIdentifier("An illegal identifier was used for this request.");
@@ -120,15 +147,15 @@ export async function getVideoInfo(video: Video): Promise<VideoInfo> {
         throw new ResourceNotFound("Could not find a Video with the given identifier.");
     }
 
-    return constructor.getVideoInfoFromContent(content.itemInfo.itemStruct);
+    return getVideoInfoFromContent(content.itemInfo.itemStruct);
 }
 
 /**
  * @param id The unique ID of the TikTok audio.
  * @returns An Audio object with a set id property.
  */
-export function getAudio(id: string): Audio {
-    return constructor.getAudioFromID(id);
+app.getAudio = function(id: string): Audio {
+    return getAudioFromID(id);
 }
 
 /**
@@ -139,9 +166,9 @@ export function getAudio(id: string): Audio {
  * @throws {ResourceNotFound} Thrown if an Audio with the id is not found.
  * @throws {IllegalArgument} Thrown if the Audio object does not have it's id property set.
  */
-export async function getAudioInfo(audio: Audio): Promise<AudioInfo> {
-    const contentURL = url.getAudioInfoContentURL(audio);
-    const content = await utility.getTiktokContent(contentURL);
+app.getAudioInfo = async function(audio: Audio): Promise<AudioInfo> {
+    const contentURL = getAudioInfoContentURL(audio);
+    const content = await this.getTiktokContent(contentURL);
 
     if (content.statusCode === ILLEGAL_IDENTIFIER) {
         throw new IllegalIdentifier("An illegal identifier was used for this request.");
@@ -149,7 +176,7 @@ export async function getAudioInfo(audio: Audio): Promise<AudioInfo> {
         throw new ResourceNotFound("Could not find an Audio with the given identifier.");
     }
 
-    return constructor.getAudioInfoFromContent(content);
+    return getAudioInfoFromContent(content);
 }
 
 /**
@@ -158,11 +185,11 @@ export async function getAudioInfo(audio: Audio): Promise<AudioInfo> {
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  * @throws {IllegalArgument} Thrown if the Audio object does not have it's id property set.
  */
-export async function getAudioTopVideos(audio: Audio): Promise<VideoInfo[]> {
-    const contentURL = url.getAudioTopContentURL(audio);
-    const content = await utility.getTiktokContent(contentURL);
+app.getAudioTopVideos = async function(audio: Audio): Promise<VideoInfo[]> {
+    const contentURL = getAudioTopContentURL(audio);
+    const content = await this.getTiktokContent(contentURL);
 
-    return content.body.itemListData.map((v: object) => constructor.getVideoInfoFromTopContent(v));
+    return content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v));
 }
 
 /**
@@ -170,8 +197,8 @@ export async function getAudioTopVideos(audio: Audio): Promise<VideoInfo[]> {
  * @returns A Tag object with set id and title properties. Will fetch the title from the TikTok API.
  * @throws {ResourceNotFound} Thrown if a Tag with the id is not found.
  */
-export async function getTag(id: string): Promise<Tag> {
-    const tagInfo = await getTagInfo(id);
+app.getTag = async function(id: string): Promise<Tag> {
+    const tagInfo = await this.getTagInfo(id);
 
     return tagInfo.tag;
 }
@@ -183,15 +210,15 @@ export async function getTag(id: string): Promise<Tag> {
  * @throws {ResourceNotFound} Thrown if a Tag with the id is not found.
  * @throws {IllegalArgument} Thrown if the Tag object does not have it's id property set.
  */
-export async function getTagInfo(tag: Tag | string): Promise<TagInfo> {
-    const contentURL = url.getTagInfoContentURL(tag);
-    const content = await utility.getTiktokContent(contentURL);
+app.getTagInfo = async function(identifier: Tag | string): Promise<TagInfo> {
+    const contentURL = getTagInfoContentURL(identifier);
+    const content = await this.getTiktokContent(contentURL);
 
     if (content.statusCode === RESOURCE_NOT_FOUND) {
         throw new ResourceNotFound("Could not find a Tag with the given identifier.");
     }
 
-    return constructor.getTagInfoFromContent(content);
+    return getTagInfoFromContent(content);
 }
 
 /**
@@ -200,9 +227,9 @@ export async function getTagInfo(tag: Tag | string): Promise<TagInfo> {
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  * @throws {IllegalArgument} Thrown if the Tag object does not have it's id property set.
  */
-export async function getTagTopVideos(tag: Tag): Promise<VideoInfo[]> {
-    const contentURL = url.getTagTopContentURL(tag);
-    const content = await utility.getTiktokContent(contentURL);
+app.getTagTopVideos = async function(tag: Tag): Promise<VideoInfo[]> {
+    const contentURL = getTagTopContentURL(tag);
+    const content = await this.getTiktokContent(contentURL);
 
-    return content.body.itemListData.map((v: object) => constructor.getVideoInfoFromTopContent(v));
+    return content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v));
 }

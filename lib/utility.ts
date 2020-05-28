@@ -1,6 +1,7 @@
 const util = require('util');
 const zlib = require('zlib');
 const request = require('request');
+const merge = require('merge-descriptors');
 
 const get = util.promisify(request.get);
 const post = util.promisify(request.post);
@@ -16,18 +17,31 @@ const optionsTemplate = {
     }
 }
 
-export async function getTiktokContent(url: string) {
-    const signedURL = await sign(url);
-    return getBody(signedURL);
+export const utility: any = {};
+
+utility.getTiktokContent = async function(url: string): Promise<object> {
+    const signedURL = await this.signURL(url);
+
+    return this.getBody(signedURL);
 }
 
-async function sign(url: string): Promise<string> {
-    const response = await post('http://localhost:4000/api/sign', { json: { url: url } });
-    return url + '&verifyFp=' + response.body.token + '&_signature=' + response.body.signature;
+utility.signURL = async function(url: string): Promise<string> {
+    let response;
+
+    if (this.options.signatureService) {
+        response = await post(this.options.signatureService, { json: { url: url } }).body;
+    } else {
+        response = await this.sign(url);
+    }
+
+    return url + '&verifyFp=' + response.token + '&_signature=' + response.signature;
 }
 
-async function getBody(url: string) {
-    const requestOptions = { ...optionsTemplate, url: url };
+utility.getBody = async function(url: string): Promise<object> {
+    const requestOptions = {
+        url: url,
+    }
+    merge(requestOptions, optionsTemplate);
 
     const response = await get(requestOptions);
     const body = await gunzip(response.body);

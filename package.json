@@ -9,7 +9,7 @@
     },
     "scripts": {
         "prepare": "npm run build",
-        "build": "rimraf dist && tsc && copy lib\\**.d.ts dist",
+        "build": "rimraf dist && tsc && copy lib\\types\\**.d.ts dist",
         "test": "echo \"Error: no test specified\""
     },
     "repository": {

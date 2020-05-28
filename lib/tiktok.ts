@@ -1,4 +1,4 @@
-import { TikTok } from './types';
+import { TikTok } from './types/core';
 import { app } from './app';
 import { utility } from './utility';
 import { signer } from './signer';

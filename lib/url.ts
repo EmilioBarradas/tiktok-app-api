@@ -1,4 +1,4 @@
-import { User, Video, Audio, Tag } from './types';
+import { User, Video, Audio, Tag } from './types/core';
 import { TYPE_RECENT_VIDEOS, TYPE_LIKED_VIDEOS, TYPE_TAG_VIDEOS, TYPE_AUDIO_VIDEOS, TYPE_TRENDING_VIDEOS } from './constants';
 import { IllegalArgument } from './errors/IllegalArgument';
 

@@ -1,4 +1,4 @@
-import { TikTok, TikTokOptions, User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types';
+import { TikTok, TikTokOptions, User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types/core';
 import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND } from './constants';
 import { IllegalOptions } from './errors/IllegalOptions';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';

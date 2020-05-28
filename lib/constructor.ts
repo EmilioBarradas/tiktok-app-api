@@ -1,4 +1,4 @@
-import { User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types';
+import { User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types/core';
 
 export function getUserFromID(id: string): User {
     return {

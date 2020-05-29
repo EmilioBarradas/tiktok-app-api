@@ -26,15 +26,16 @@ utility.getTiktokContent = async function(url: string): Promise<object> {
 }
 
 utility.signURL = async function(url: string): Promise<string> {
-    let response;
+    let body;
 
     if (this.options.signatureService) {
-        response = await post(this.options.signatureService, { json: { url: url } }).body;
+        const response = await post(this.options.signatureService, { json: { url: url } });
+        body = response.body;
     } else {
-        response = await this.sign(url);
+        body = await this.sign(url);
     }
 
-    return url + '&verifyFp=' + response.token + '&_signature=' + response.signature;
+    return url + '&verifyFp=' + body.token + '&_signature=' + body.signature;
 }
 
 utility.getBody = async function(url: string): Promise<object> {

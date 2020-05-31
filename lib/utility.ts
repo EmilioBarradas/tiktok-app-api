@@ -50,3 +50,12 @@ utility.getBody = async function(url: string): Promise<object> {
 
     return json;
 }
+
+export function isPuppeteerInstalled(): boolean {
+    try {
+        require.resolve('puppeteer');
+    } catch (err) {
+        return false;
+    }
+    return true;
+}

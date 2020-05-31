@@ -1,6 +1,5 @@
 import { TikTok, TikTokOptions, User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types/core';
-import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND } from './constants';
-import { IllegalOptions } from './errors/IllegalOptions';
+import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, PUPPETEER_NOT_FOUND } from './constants';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';
 import { ResourceNotFound } from './errors/ResourceNotFound';
 import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL, 
@@ -9,15 +8,22 @@ import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL
 import { getVideoInfoFromContent, getUserFromID, getUserInfoFromContent, 
          getVideoFromID, getAudioFromID, getAudioInfoFromContent, 
          getTagInfoFromContent, getVideoInfoFromTopContent } from './constructor';
+import { isPuppeteerInstalled } from './utility';
 
 export const app = {} as TikTok;
 
 /**
  * Initializes the default settings of the application.
+ * @private
  */
-app.init = async function() {
-    this.options = {};
-    this.signer = await this.getNewSigner();
+app.init = async function(options: TikTokOptions): Promise<void> {
+    if (!options.signatureService && !isPuppeteerInstalled()) {
+        console.error(PUPPETEER_NOT_FOUND);
+        process.exit(1);
+    }
+
+    this.options = options;
+    this.signer = options.signatureService ? null : await this.getNewSigner();
 }
 
 /**
@@ -25,19 +31,6 @@ app.init = async function() {
  */
 app.close = function() {
     this.signer.close();
-}
-
-/**
- * Sets the options that should be used within the application.
- * @param options The TikTokOptions object to use.
- * @throws {InvalidOptions} Thrown if the passed options are improperly configured.
- */
-app.useOptions = function(options: TikTokOptions) {
-    if (options == null) {
-        throw new IllegalOptions('Improperly configured options. Cannot set them to null.');
-    }
-
-    this.options = options;
 }
 
 /**

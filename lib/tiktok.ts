@@ -1,4 +1,4 @@
-import { TikTok } from './types/core';
+import { TikTok, TikTokOptions } from './types/core';
 import { app } from './app';
 import { utility } from './utility';
 import { signer } from './signer';
@@ -8,7 +8,7 @@ import merge = require('merge-descriptors');
 
 export = tiktok;
 
-async function tiktok(): Promise<TikTok> {
+async function tiktok(options: TikTokOptions = {}): Promise<TikTok> {
     const newApp = {} as TikTok;
 
     merge(newApp, app);
@@ -16,7 +16,7 @@ async function tiktok(): Promise<TikTok> {
     merge(newApp, signer);
     merge(newApp, error);
 
-    await newApp.init();
+    await newApp.init(options);
 
     return newApp;
 }

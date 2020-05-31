@@ -75,19 +75,12 @@ export interface TikTok {
      * Initializes the default settings of the application.
      * @private
      */
-    init(): void;
+    init(options: TikTokOptions): Promise<void>;
 
     /**
      * Shuts down the application.
      */
     close(): void;
-
-    /**
-     * Sets the options that should be used within the application.
-     * @param options The TikTokOptions object to use.
-     * @throws {InvalidOptions} Thrown if the passed options are improperly configured.
-     */
-    useOptions(options: TikTokOptions): void;
 
     /**
      * Retrieves the top trending videos on TikTok. Currently returns a maximum of 30 videos.

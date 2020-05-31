@@ -113,11 +113,11 @@ async function main() {
 }
 ```
 
-While instantiating a new instance of the application, the puppeteer browser and any default settings of the application will be set up.
+While instantiating a new instance of the application, the default signature service, if being used, and any default settings of the application will be set up.
 
 ### Options
 
-If you would like to use your own signature service instead of the default option, you can specify this in a TikTokOptions object.
+If you would like to use your own signature service instead of the default option, you can specify this in a TikTokOptions object. See [TikTokOptions](#tiktokoptions) for a definition of the TikTokOptions object.
 
 ```javascript
 const tiktokApi = await tiktok({

@@ -69,11 +69,19 @@ async function main() {
 Installation
 ---
 
-Install the api:
+Install the API:
 
 ```console
 npm i tiktok-app-api
 ```
+
+If you would like to run the default signature service, you must also install tiktok-signature. To setup an independent signature service, take a look at [TikTok-Web-API](https://github.com/TikStock/tiktok-web-api-example).
+
+```console
+npm i tiktok-signature
+```
+
+[Puppeteer](https://github.com/puppeteer/puppeteer) will be installed alongside tiktok-signature, as API requests will be made through a headless browser instance.
 
 Import into your program.
 
@@ -83,8 +91,6 @@ const tiktok = require('tiktok-app-api');
 // Or, if you are using TypeScript:
 import tiktok = require('tiktok-app-api'):
 ```
-
-[Puppeteer](https://github.com/puppeteer/puppeteer) will be installed alongside this module, as API requests are made through a  headless Puppeteer browser instance. Although, take a look at [TikTok-Web-API](https://github.com/TikStock/tiktok-web-api-example) to run this as a separate web service.
 
 Usage
 ---
@@ -114,11 +120,9 @@ While instantiating a new instance of the application, the puppeteer browser and
 If you would like to use your own signature service instead of the default option, you can specify this in a TikTokOptions object.
 
 ```javascript
-const options = {
+const tiktokApi = await tiktok({
   signatureService: 'http://localhost:8000/api/sign'
-}
-
-tiktokApi.useOptions(options);
+});
 ```
 
 ### Trending

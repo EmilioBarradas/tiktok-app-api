@@ -8,12 +8,15 @@ Table of Contents
 * [Quick Examples](#quick-examples)
 * [Installation](#installation)
 * [Usage](#usage)
+  * [Application Instance](#application-instance)
+  * [Options](#options)
   * [Trending](#trending)
   * [Users](#users)
   * [Videos](#videos)
   * [Audios](#audios)
   * [Tags](#tags)
 * [Object Reference](#object-reference)
+  * [TikTokOptions](#tiktokoptions)
   * [User](#user)
   * [UserInfo](#userinfo)
   * [Video](#video)
@@ -31,10 +34,18 @@ Get the follower count of a TikTok user:
 ```javascript
 const tiktok = require('tiktok-app-api');
 
-const user = await tiktok.getUserByName('example');
-const userInfo = await tiktok.getUserInfo(user);
+let tiktokApp;
 
-console.log(userInfo.followerCount);
+main();
+
+async function main() {
+  tiktokApp = await tiktok();
+
+  const user = await tiktokApp.getUserByName('example');
+  const userInfo = await tiktokApp.getUserInfo(user);
+
+  console.log(userInfo.followerCount);
+}
 ```
 
 Get the tags of the top trending video:
@@ -42,15 +53,21 @@ Get the tags of the top trending video:
 ```javascript
 const tiktok = require('tiktok-app-api');
 
-const trendingVideos = await tiktok.getTrendingVideos();
+let tiktokApp;
 
-console.log(trendingVideos[0].tags);
+main();
+
+async function main() {
+  tiktokApp = await tiktok();
+
+  const trendingVideos = await tiktokApp.getTrendingVideos();
+
+  console.log(trendingVideos[0].tags);
+}
 ```
 
 Installation
 ---
-
-You must install puppeteer in order to run the API. Although, take a look at [TikTok-Web-API](https://github.com/TikStock/tiktok-web-api-example) to run this module as a web service.
 
 Install the api:
 
@@ -67,17 +84,49 @@ const tiktok = require('tiktok-app-api');
 import tiktok = require('tiktok-app-api'):
 ```
 
+[Puppeteer](https://github.com/puppeteer/puppeteer) will be installed alongside this module, as API requests are made through a  headless Puppeteer browser instance. Although, take a look at [TikTok-Web-API](https://github.com/TikStock/tiktok-web-api-example) to run this as a separate web service.
+
 Usage
 ---
 
 At the moment, the majority of the API returns promises, and may throw errors in certain situations. When a promise is not returned, or if a function may throw an error, it will be mentioned.
+
+### Application Instance
+
+To start using the API, you must first instantiate an instance of the application.
+
+```javascript
+const tiktok = require('tiktok-app-api');
+
+let tiktokApi;
+
+main();
+
+async function main() {
+  tiktokApi = await tiktok();
+}
+```
+
+While instantiating a new instance of the application, the puppeteer browser and any default settings of the application will be set up.
+
+### Options
+
+If you would like to use your own signature service instead of the default option, you can specify this in a TikTokOptions object.
+
+```javascript
+const options = {
+  signatureService: 'http://localhost:8000/api/sign'
+}
+
+tiktokApi.useOptions(options);
+```
 
 ### Trending
 
 To get the top trending videos using the API is as simple as:
 
 ```javascript
-const trendingVideos = await tiktok.getTrendingVideos();
+const trendingVideos = await tiktokApp.getTrendingVideos();
 
 console.log(trendingVideos);
 ```
@@ -91,7 +140,7 @@ Get a User object from a TikTok user's username:
 Will fetch ID of user from TikTok API. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L47).
 
 ```javascript
-const user = await tiktok.getUserByName('example');
+const user = await tiktokApp.getUserByName('example');
 ```
 
 Get a User object from a TikTok user's id:
@@ -99,7 +148,7 @@ Get a User object from a TikTok user's id:
 Will not fetch username of user from TikTok API.
 
 ```javascript
-const user = tiktok.getUserByID('6828402025898902533');
+const user = tiktokApp.getUserByID('6828402025898902533');
 ```
 
 Take note that getUserByID(id) does not return a promise, as it does not fetch any information from the TikTok API.
@@ -109,7 +158,7 @@ Now that we have a User object, we can retrieve some information from the TikTok
 See [UserInfo](#userinfo) for a defintion of the UserInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L67).
 
 ```javascript
-const userInfo = await tiktok.getUserInfo(user);
+const userInfo = await tiktokApp.getUserInfo(user);
 
 console.log(userInfo.followingCount, userInfo.followerCount, userInfo.likeCount);
 ```
@@ -119,7 +168,7 @@ Now, let's get the user's lastest videos:
 See [VideoInfo](#videoinfo) for a definition of the VideoInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L88).
 
 ```javascript
-const recentVideos = await tiktok.getRecentVideos(user);
+const recentVideos = await tiktokApp.getRecentVideos(user);
 
 console.log(recentVideos[0].description, recentVideos[0].playCount, recentVideos[0].tags);
 ```
@@ -129,7 +178,7 @@ Same idea, we can get the user's liked videos:
 May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L106).
 
 ```javascript
-const likedVideos = await tiktok.getLikedVideos(user);
+const likedVideos = await tiktokApp.getLikedVideos(user);
 
 console.log(likedVideos[0].audio, likedVideos[0].shareCount, likedVideos[0].likeCount);
 ```
@@ -141,7 +190,7 @@ That covers users. Let's move on to TikTok videos.
 Just like how previously we needed our User object, we now need our Video object. See [Video](#video) for a definition of the Video object.
 
 ```javascript
-const video = tiktok.getVideo('6829280471411674374');
+const video = tiktokApp.getVideo('6829280471411674374');
 ```
 
 Take note that getVideo(id) does not return a promise, as it does not fetch any information from the TikTok API.
@@ -151,7 +200,7 @@ Now to get the information of this video:
 May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L132).
 
 ```javascript
-const videoInfo = await tiktok.getVideoInfo(video);
+const videoInfo = await tiktokApp.getVideoInfo(video);
 
 console.log(videoInfo.commentCount, videoInfo.author, videoInfo.video.id);
 ```
@@ -163,7 +212,7 @@ That's all there is for videos, for now. Now on to Tiktok audios.
 Just like Users and Videos, we first need an Audio object.
 
 ```javascript
-const audio = tiktok.getAudio('6829280451471969029');
+const audio = tiktokApp.getAudio('6829280451471969029');
 ```
 
 Take note that getAudio(id) does not return a promise, as it does not fetch any information from the TikTok API.
@@ -173,7 +222,7 @@ To get the information related to the audio:
 See [AudioInfo](#audioinfo) for a definition of the AudioInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L161).
 
 ```javascript
-const audioInfo = await tiktok.getAudioInfo(audio);
+const audioInfo = await tiktokApp.getAudioInfo(audio);
 
 console.log(audioInfo.title, audioInfo.audio.title);
 ```
@@ -183,7 +232,7 @@ To get the top videos related to an audio:
 The first object of this VideoInfo array will be the original video with the audio. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L182).
 
 ```javascript
-const topVideos = await tiktok.getAudioTopVideos(audio);
+const topVideos = await tiktokApp.getAudioTopVideos(audio);
 
 console.log(topVideos[0]);
 ```
@@ -197,7 +246,7 @@ Just like Users, Videos, and Audios, we need a Tag object.
 Will fetch the title from the TikTok API, therefore this function returns a promise. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L195).
 
 ```javascript
-const tag = await tiktok.getTag('fyp');
+const tag = await tiktokApp.getTag('fyp');
 ```
 
 To retrieve the information associated with the tag:
@@ -205,7 +254,7 @@ To retrieve the information associated with the tag:
 See [TagInfo](#taginfo) for a definition of the TagInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#206).
 
 ```javascript
-const tagInfo = await tiktok.getTagInfo(tag);
+const tagInfo = await tiktokApp.getTagInfo(tag);
 
 console.log(tagInfo.description, tagInfo.videoCount, tagInfo.viewCount);
 ```
@@ -215,7 +264,7 @@ To get the top videos of a tag:
 May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L224).
 
 ```javascript
-const topVideos = await tiktok.getTagTopVideos(tag);
+const topVideos = await tiktokApp.getTagTopVideos(tag);
 
 console.log(topVideos);
 ```
@@ -224,6 +273,13 @@ Object Reference
 ---
 
 Below you will find the data that each object contains.
+
+### TikTokOptions
+```yaml
+TikTokOptions {
+  signatureService?: string // Not required.
+}
+```
 
 ### User
 ```yaml

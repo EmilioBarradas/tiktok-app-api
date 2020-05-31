@@ -66,6 +66,8 @@ async function main() {
 }
 ```
 
+Take a look at [tiktok-web-api-example](https://github.com/tikstock/tiktok-web-api-example) for an up to date web API using this module.
+
 Installation
 ---
 
@@ -75,7 +77,7 @@ Install the API:
 npm i tiktok-app-api
 ```
 
-If you would like to run the default signature service, you must also install tiktok-signature. To setup an independent signature service, take a look at [TikTok-Web-API](https://github.com/TikStock/tiktok-web-api-example).
+If you would like to run the default signature service, you must also install tiktok-signature. To setup an independent signature service, take a look at [tiktok-signature-api](https://github.com/tikstock/tiktok-signature-api).
 
 ```console
 npm i tiktok-signature

@@ -4,7 +4,7 @@ import * as core from './core';
  * Creates and initializes a new TikTok application.
  * @returns A promise with the resolved value of a TikTok application object.
  */
-declare function tiktok(): Promise<core.TikTok>;
+declare function tiktok(options?: core.TikTokOptions): Promise<core.TikTok>;
 
 declare namespace tiktok {
     interface TikTokOptions extends core.TikTokOptions { }

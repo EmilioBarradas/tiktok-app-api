@@ -1,21 +1,25 @@
-const Signer = require('tiktok-signature');
+import { isSignatureInstalled } from './utility';
 
 export const signer: any = {};
 
-signer.getNewSigner = async function(): Promise<any> {
-    const signer = new Signer();
+if (isSignatureInstalled()) {
+    const Signer = require('tiktok-signature');
 
-    await signer.init();
+    signer.getNewSigner = async function(): Promise<any> {
+        const signer = new Signer();
+    
+        await signer.init();
+    
+        return signer;
+    }
 
-    return signer;
-}
-
-signer.sign = async function(url: string): Promise<object> {
-    const signature = await this.signer.sign(url);
-    const token = await this.signer.getVerifyFp(url);
-
-    return {
-        signature: signature,
-        token: token,
+    signer.sign = async function(url: string): Promise<object> {
+        const signature = await this.signer.sign(url);
+        const token = await this.signer.getVerifyFp(url);
+    
+        return {
+            signature: signature,
+            token: token,
+        }
     }
 }

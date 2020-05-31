@@ -51,9 +51,9 @@ utility.getBody = async function(url: string): Promise<object> {
     return json;
 }
 
-export function isPuppeteerInstalled(): boolean {
+export function isSignatureInstalled(): boolean {
     try {
-        require.resolve('puppeteer');
+        require.resolve('tiktok-signature');
     } catch (err) {
         return false;
     }

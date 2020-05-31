@@ -1,3 +1,5 @@
+type Nullable<T> = T | null;
+
 interface TikTokOptions {
     signatureService?: string,
 }
@@ -31,7 +33,7 @@ interface VideoInfo {
     shareCount: number,
     description: string,
     tags: Tag[],
-    audio: AudioInfo,
+    audio: Nullable<AudioInfo>,
 }
 
 interface Audio {

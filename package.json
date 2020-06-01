@@ -32,7 +32,6 @@
         "typescript": "^3.9.3"
     },
     "dependencies": {
-        "merge-descriptors": "^1.0.1",
-        "request": "^2.88.2"
+        "merge-descriptors": "^1.0.1"
     }
 }

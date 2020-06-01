@@ -66,7 +66,7 @@ async function main() {
 }
 ```
 
-Take a look at [tiktok-web-api-example](https://github.com/tikstock/tiktok-web-api-example) for an up to date web API using this module.
+Take a look at [tiktok-web-api-example](https://github.com/tikstock/tiktok-web-api-example) for an up-to-date web API using this module.
 
 Installation
 ---

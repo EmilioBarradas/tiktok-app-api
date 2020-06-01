@@ -202,7 +202,7 @@ export interface TikTok {
     /**
      * @private
      */
-    getBody: Function;
+    signURL: Function;
 
     /**
      * @private

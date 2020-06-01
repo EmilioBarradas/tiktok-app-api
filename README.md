@@ -106,12 +106,12 @@ To start using the API, you must first instantiate an instance of the applicatio
 ```javascript
 const tiktok = require('tiktok-app-api');
 
-let tiktokApi;
+let tiktokApp;
 
 main();
 
 async function main() {
-  tiktokApi = await tiktok();
+  tiktokApp = await tiktok();
 }
 ```
 
@@ -122,7 +122,7 @@ While instantiating a new instance of the application, the default signature ser
 If you would like to use your own signature service instead of the default option, you can specify this in a TikTokOptions object. See [TikTokOptions](#tiktokoptions) for a definition of the TikTokOptions object.
 
 ```javascript
-const tiktokApi = await tiktok({
+const tiktokApp = await tiktok({
   signatureService: 'http://localhost:8000/api/sign'
 });
 ```
@@ -176,7 +176,7 @@ See [VideoInfo](#videoinfo) for a definition of the VideoInfo object. May throw 
 ```javascript
 const recentVideos = await tiktokApp.getRecentVideos(user);
 
-console.log(recentVideos[0].description, recentVideos[0].playCount, recentVideos[0].tags);
+console.log(recentVideos);
 ```
 
 Same idea, we can get the user's liked videos:
@@ -186,7 +186,7 @@ May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d
 ```javascript
 const likedVideos = await tiktokApp.getLikedVideos(user);
 
-console.log(likedVideos[0].audio, likedVideos[0].shareCount, likedVideos[0].likeCount);
+console.log(likedVideos);
 ```
 
 That covers users. Let's move on to TikTok videos.

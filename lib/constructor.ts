@@ -1,4 +1,4 @@
-import { User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types/core';
+import { User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo, Nullable } from './types/core';
 
 export function getUserFromID(id: string): User {
     return {
@@ -32,7 +32,13 @@ export function getVideoFromID(id: string): Video {
 }
 
 export function getVideoInfoFromContent(obj: any): VideoInfo {
-    const tags = typeof obj.challenges !== 'undefined' ? obj.challenges.map((t: object) => getTagFromContent(t)) : [];
+    const tags = typeof obj.challenges !== 'undefined' 
+        ? obj.challenges.map((t: object) => getTagFromContent(t)) 
+        : [];
+
+    const audio: Nullable<AudioInfo> = typeof obj.music !== 'undefined' 
+        ? { audio: { id: obj.music.id, }, title: obj.music.title, } 
+        : null;
 
     return {
         video: {
@@ -48,12 +54,7 @@ export function getVideoInfoFromContent(obj: any): VideoInfo {
         shareCount: obj.stats.shareCount,
         description: obj.desc,
         tags: tags,
-        audio: {
-            audio: {
-                id: obj.music.id,
-            },
-            title: obj.music.title,
-        },
+        audio: audio,
     }
 }
 

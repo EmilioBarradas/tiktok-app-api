@@ -1,4 +1,7 @@
-import { TikTok, TikTokOptions, User, UserInfo, Video, VideoInfo, Audio, AudioInfo, Tag, TagInfo } from './types/core';
+import { TikTok, TikTokOptions, User, 
+         UserInfo, Video, VideoInfo, 
+         Audio, AudioInfo, Tag, TagInfo, 
+         SearchOptions, VideoBatch, SubsetFunction } from './types/core';
 import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, SIGNATURE_NOT_FOUND } from './constants';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';
 import { ResourceNotFound } from './errors/ResourceNotFound';
@@ -8,7 +11,7 @@ import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL
 import { getVideoInfoFromContent, getUserFromID, getUserInfoFromContent, 
          getVideoFromID, getAudioFromID, getAudioInfoFromContent, 
          getTagInfoFromContent, getVideoInfoFromTopContent } from './constructor';
-import { isSignatureInstalled } from './utility';
+import { isSignatureInstalled, getVideoGenerator } from './utility';
 
 export const app = {} as TikTok;
 
@@ -86,21 +89,16 @@ app.getUserInfo = async function(identifier: User | string): Promise<UserInfo> {
 }
 
 /**
- * Retrieves the information of the latest videos of a TikTok user. Currently returns a maximum of 30 videos.
+ * Retrieves the information of a subset of videos uploaded by the TikTok user.
  * @param user The User object of a TikTok user.
+ * @param options An optional SearchOptions object that contains the count and starting cursor to use for this request.
+ *                The default count is 30, and default starting cursor is 0.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  *          The resolved value will be an empty array if none videos are found.
- * @throws {IllegalArgument} Thrown if the User object does not have it's id property set.
+ * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
  */
-app.getRecentVideos = async function(user: User): Promise<VideoInfo[]> {
-    const contentURL = getRecentVideosContentURL(user);
-    const content = await this.getTiktokContent(contentURL);
-
-    if (typeof content.items === 'undefined') {
-        return [];
-    }
-
-    return content.items.map((v: object) => getVideoInfoFromContent(v));
+app.getUploadedVideos = function(user: User, options: SearchOptions = { count: 30, startCur: '0' }): AsyncGenerator<VideoInfo[]> {
+    return getVideoGenerator(this._getUploadedVideosBatch, options.count!, options.startCur!, user);
 }
 
 /**
@@ -232,4 +230,18 @@ app.getTagTopVideos = async function(tag: Tag): Promise<VideoInfo[]> {
     const content = await this.getTiktokContent(contentURL);
 
     return content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v));
+}
+
+app._getUploadedVideosBatch = async function(count: number, startCur: string, user: User): Promise<VideoBatch> {
+    const contentURL = getRecentVideosContentURL(user, count, startCur);
+    const content = await this.getTiktokContent(contentURL);
+
+    return typeof content.items === 'undefined' 
+        ? { 
+            videos: [], 
+            cur: '-1' 
+        } : { 
+            videos: content.items.map((v: object) => getVideoInfoFromContent(v)),
+            cur: content.maxCursor,
+        };
 }

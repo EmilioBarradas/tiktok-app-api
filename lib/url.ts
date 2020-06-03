@@ -19,13 +19,13 @@ export function getUserInfoContentURL(identifier: User | string): string {
     return 'https://m.tiktok.com/api/user/detail/?uniqueId=' + identifier.username;
 }
 
-export function getRecentVideosContentURL(user: User): string {
+export function getRecentVideosContentURL(user: User, count: number, startCur: string): string {
     if (typeof user.id === 'undefined') {
         throw new IllegalArgument("Passed User must have an id set.");
     }
 
-    return 'https://m.tiktok.com/api/item_list/?count=30&id=' + user.id 
-            + '&type=' + TYPE_RECENT_VIDEOS + '&secUid=&maxCursor=0&minCursor=0&sourceType=8&appId=1233';
+    return 'https://m.tiktok.com/api/item_list/?count=' + count + '&id=' + user.id + '&type=' 
+            + TYPE_RECENT_VIDEOS + '&secUid=&maxCursor=' + startCur + '&minCursor=0&sourceType=8&appId=1233';
 }
 
 export function getLikedVideosContentURL(user: User): string {

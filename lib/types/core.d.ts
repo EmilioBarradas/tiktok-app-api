@@ -62,9 +62,9 @@ interface VideoBatch {
     cur: string,
 }
 
-type SubsetFunction = (count: number, startCur: string, type?: GeneratorType) => Promise<VideoBatch>
-
 type GeneratorType = User | Audio | Tag;
+
+type SubsetFunction = (count: number, startCur: string, type: GeneratorType) => Promise<VideoBatch>;
 
 interface SearchOptions {
     count?: number,

@@ -5,6 +5,7 @@ import zlib = require('zlib');
 import merge = require('merge-descriptors');
 
 import { IncomingMessage } from 'http';
+import { VideoInfo, SubsetFunction, VideoBatch, GeneratorType } from './types/core';
 
 const gunzip = util.promisify(zlib.gunzip);
 const deflate = util.promisify(zlib.deflate);
@@ -116,4 +117,18 @@ export function isSignatureInstalled(): boolean {
         return false;
     }
     return true;
+}
+
+export async function* getVideoGenerator(subset: SubsetFunction, count: number,
+        startCur: string, type: GeneratorType): AsyncGenerator<VideoInfo[]> {
+    let nextCur = startCur;
+    let batch: VideoBatch;
+
+    do {
+        batch = await subset(count, nextCur, type);
+        nextCur = batch.cur;
+        yield batch.videos;
+    } while (batch.videos.length === count);
+
+    return [];
 }

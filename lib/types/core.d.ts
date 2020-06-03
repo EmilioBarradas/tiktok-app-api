@@ -57,6 +57,20 @@ interface TagInfo {
     viewCount: number,
 }
 
+interface VideoBatch {
+    videos: VideoInfo[],
+    cur: string,
+}
+
+type SubsetFunction = (count: number, startCur: string, type?: GeneratorType) => Promise<VideoBatch>
+
+type GeneratorType = User | Audio | Tag;
+
+interface SearchOptions {
+    count?: number,
+    startCur?: string,
+}
+
 interface Signer {
     close(): void;
 }
@@ -66,18 +80,6 @@ export interface TikTok {
      * Settings used by the application.
      */
     options: TikTokOptions;
-
-    /**
-     * Signer object used to sign URLs if the program does not use an external signature service.
-     * @private
-     */
-    signer: Signer;
-
-    /**
-     * Initializes the default settings of the application.
-     * @private
-     */
-    init(options: TikTokOptions): Promise<void>;
 
     /**
      * Shuts down the application.
@@ -115,13 +117,15 @@ export interface TikTok {
     getUserInfo(identifier: User | string): Promise<UserInfo>;
 
     /**
-     * Retrieves the information of the latest videos of a TikTok user. Currently returns a maximum of 30 videos.
+     * Retrieves the information of a subset of videos uploaded by the TikTok user.
      * @param user The User object of a TikTok user.
+     * @param options An optional SearchOptions object that contains the count and starting cursor to use for this request.
+     *                The default count is 30, and default starting cursor is 0.
      * @returns A promise with the resolved value of an array of VideoInfo objects.
      *          The resolved value will be an empty array if none videos are found.
-     * @throws {IllegalArgument} Thrown if the User object does not have it's id property set.
+     * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
      */
-    getRecentVideos(user: User): Promise<VideoInfo[]>;
+    getUploadedVideos(user: User, options: SearchOptions): AsyncGenerator<VideoInfo[]>;
 
     /**
      * Retrieves the information of the liked videos of a TikTok user. Currently returns a maximum of 30 videos.
@@ -196,6 +200,31 @@ export interface TikTok {
      */
     getTagTopVideos(tag: Tag): Promise<VideoInfo[]>;
 
+    IllegalArgument: Function,
+
+    IllegalIdentifier: Function,
+
+    IllegalOptions: Function,
+
+    ResourceNotFound: Function,
+
+    /**
+     * @private
+     */
+    _getUploadedVideosBatch(count: number, startCur: string, user: User): Promise<VideoBatch>;
+
+    /**
+     * Initializes the default settings of the application.
+     * @private
+     */
+    init(options: TikTokOptions): Promise<void>;
+
+    /**
+     * Signer object used to sign URLs if the program does not use an external signature service.
+     * @private
+     */
+    signer: Signer;
+
     /**
      * @private
      */
@@ -215,12 +244,4 @@ export interface TikTok {
      * @private
      */
     sign: Function;
-
-    IllegalArgument: Function,
-
-    IllegalIdentifier: Function,
-
-    IllegalOptions: Function,
-
-    ResourceNotFound: Function,
 }

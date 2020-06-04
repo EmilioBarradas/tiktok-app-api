@@ -3,7 +3,7 @@ import { TikTok, TikTokOptions, User,
          Audio, AudioInfo, Tag, TagInfo, 
          SearchOptions, VideoBatch } from './types/core';
 import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, 
-         SIGNATURE_NOT_FOUND, DEFAULT_SEARCH_OPTIONS } from './constants';
+         SIGNATURE_NOT_FOUND } from './constants';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';
 import { ResourceNotFound } from './errors/ResourceNotFound';
 import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL, 
@@ -46,9 +46,9 @@ app.close = function() {
  *                out the amount of videos per request at ~100 videos.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  */
-app.getTrendingVideos = function(options: SearchOptions = 
-        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[]> {
-    return getVideoGenerator(getTrendingVideosBatch.bind(this), options.count!, options.startCur!, 'Trending');
+app.getTrendingVideos = function({ count = 30, startCur = '0' }: SearchOptions = {}): 
+        AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getTrendingVideosBatch.bind(this), count, startCur, 'Trending');
 }
 
 /**
@@ -104,9 +104,9 @@ app.getUserInfo = async function(identifier: User | string): Promise<UserInfo> {
  *          The resolved value will be an empty array if none videos are found.
  * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
  */
-app.getUploadedVideos = function(user: User, options: SearchOptions = 
-        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[]> {
-    return getVideoGenerator(getUploadedVideosBatch.bind(this), options.count!, options.startCur!, user);
+app.getUploadedVideos = function(user: User, { count = 30, startCur = '0' }: SearchOptions = {}): 
+        AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getUploadedVideosBatch.bind(this), count, startCur, user);
 }
 
 /**
@@ -121,9 +121,9 @@ app.getUploadedVideos = function(user: User, options: SearchOptions =
  *          The resolved value will be an empty array if none videos are found.
  * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
  */
-app.getLikedVideos = function(user: User, options: SearchOptions = 
-        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[]> {
-    return getVideoGenerator(getLikedVideosBatch.bind(this), options.count!, options.startCur!, user);
+app.getLikedVideos = function(user: User, { count = 30, startCur = '0' }: SearchOptions = {}): 
+        AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getLikedVideosBatch.bind(this), count, startCur, user);
 }
 
 /**
@@ -195,9 +195,9 @@ app.getAudioInfo = async function(audio: Audio): Promise<AudioInfo> {
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  * @throws {IllegalArgument} Thrown if the Audio object does not have it's id property set.
  */
-app.getAudioTopVideos = function(audio: Audio, options: SearchOptions = 
-        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[], VideoInfo[]> {
-    return getVideoGenerator(getAudioTopVideosBatch.bind(this), options.count!, options.startCur!, audio)
+app.getAudioTopVideos = function(audio: Audio, { count = 30, startCur = '0' }: SearchOptions = {}): 
+        AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getAudioTopVideosBatch.bind(this), count, startCur, audio)
 }
 
 /**
@@ -240,9 +240,9 @@ app.getTagInfo = async function(identifier: Tag | string): Promise<TagInfo> {
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  * @throws {IllegalArgument} Thrown if the Tag object does not have it's id property set.
  */
-app.getTagTopVideos = function(tag: Tag, options: SearchOptions = 
-        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[], VideoInfo[]> {
-    return getVideoGenerator(getTagTopVideosBatch.bind(this), options.count!, options.startCur!, tag);
+app.getTagTopVideos = function(tag: Tag, { count = 30, startCur = '0' }: SearchOptions = {}): 
+        AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getTagTopVideosBatch.bind(this), count, startCur, tag);
 }
 
 async function getTrendingVideosBatch(this: TikTok, count: number, startCur: string): Promise<VideoBatch> {

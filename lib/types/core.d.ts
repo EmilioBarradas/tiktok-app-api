@@ -62,9 +62,9 @@ interface VideoBatch {
     cur: string,
 }
 
-type GeneratorType = User | Audio | Tag;
+type GeneratorType = User | Audio | Tag | 'Trending';
 
-type SubsetFunction = (count: number, startCur: string, type: GeneratorType) => Promise<VideoBatch>;
+type BatchFunction = (count: number, startCur: string, type?: any) => Promise<VideoBatch>;
 
 interface SearchOptions {
     count?: number,
@@ -87,10 +87,15 @@ export interface TikTok {
     close(): void;
 
     /**
-     * Retrieves the top trending videos on TikTok. Currently returns a maximum of 30 videos.
+     * Retrieves the information of a subset of the trending videos on TikTok.
+     * @param options An optional SearchOptions object that contains the count 
+     *                and starting cursor to use for this request.
+     *                The default count is 30, and default starting cursor is 0.
+     *                Using a count higher than 100 is redundant, as TikTok maxes
+     *                out the amount of videos per request at ~100 videos.
      * @returns A promise with the resolved value of an array of VideoInfo objects.
      */
-    getTrendingVideos(): Promise<VideoInfo[]>;
+    getTrendingVideos(options?: SearchOptions): AsyncGenerator<VideoInfo[], VideoInfo[]>;
 
     /**
      * @param username The username of the TikTok user.
@@ -119,8 +124,11 @@ export interface TikTok {
     /**
      * Retrieves the information of a subset of videos uploaded by the TikTok user.
      * @param user The User object of a TikTok user.
-     * @param options An optional SearchOptions object that contains the count and starting cursor to use for this request.
+     * @param options An optional SearchOptions object that contains the count 
+     *                and starting cursor to use for this request.
      *                The default count is 30, and default starting cursor is 0.
+     *                Using a count higher than 100 is redundant, as TikTok maxes
+     *                out the amount of videos per request at ~100 videos.
      * @returns A promise with the resolved value of an array of VideoInfo objects.
      *          The resolved value will be an empty array if none videos are found.
      * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
@@ -128,13 +136,18 @@ export interface TikTok {
     getUploadedVideos(user: User, options?: SearchOptions): AsyncGenerator<VideoInfo[], VideoInfo[]>;
 
     /**
-     * Retrieves the information of the liked videos of a TikTok user. Currently returns a maximum of 30 videos.
+     * Retrieves the information of a subset of the videos liked by the TikTok user.
      * @param user The User object of a TikTok user.
+     * @param options An optional SearchOptions object that contains the count 
+     *                and starting cursor to use for this request.
+     *                The default count is 30, and default starting cursor is 0.
+     *                Using a count higher than 100 is redundant, as TikTok maxes
+     *                out the amount of videos per request at ~100 videos.
      * @returns A promise with the resolved value of an array of VideoInfo objects.
      *          The resolved value will be an empty array if none videos are found.
-     * @throws {IllegalArgument} Thrown if the User object does not have it's id property set.
+     * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
      */
-    getLikedVideos(user: User): Promise<VideoInfo[]>;
+    getLikedVideos(user: User, options?: SearchOptions): AsyncGenerator<VideoInfo[], VideoInfo[]>;
 
     /**
      * @param id The unique ID of the TikTok video.
@@ -169,12 +182,17 @@ export interface TikTok {
     getAudioInfo(audio: Audio): Promise<AudioInfo>;
 
     /**
-     * Retrieves the top videos of a TikTok audio. Currently returns a maximum of 30 videos.
+     * Retrieves the information of a subset of the top videos of the TikTok audio.
      * @param audio The Audio object of a TikTok audio.
+     * @param options An optional SearchOptions object that contains the count 
+     *                and starting cursor to use for this request.
+     *                The default count is 30, and default starting cursor is 0.
+     *                Using a count higher than 100 is redundant, as TikTok maxes
+     *                out the amount of videos per request at ~100 videos.
      * @returns A promise with the resolved value of an array of VideoInfo objects.
      * @throws {IllegalArgument} Thrown if the Audio object does not have it's id property set.
      */
-    getAudioTopVideos(audio: Audio): Promise<VideoInfo[]>;
+    getAudioTopVideos(audio: Audio, options?: SearchOptions): AsyncGenerator<VideoInfo[], VideoInfo[]>;
 
     /**
      * @param id The unique ID of the TikTok tag.
@@ -193,12 +211,17 @@ export interface TikTok {
     getTagInfo(identifier: Tag | string): Promise<TagInfo>;
 
     /**
-     * Retrieves the top videos of a TikTok tag. Currently returns a maximum of 30 videos.
+     * Retrieves the information of a subset of the top videos of the TikTok tag.
      * @param audio The Tag object of a TikTok tag.
+     * @param options An optional SearchOptions object that contains the count 
+     *                and starting cursor to use for this request.
+     *                The default count is 30, and default starting cursor is 0.
+     *                Using a count higher than 100 is redundant, as TikTok maxes
+     *                out the amount of videos per request at ~100 videos.
      * @returns A promise with the resolved value of an array of VideoInfo objects.
      * @throws {IllegalArgument} Thrown if the Tag object does not have it's id property set.
      */
-    getTagTopVideos(tag: Tag): Promise<VideoInfo[]>;
+    getTagTopVideos(tag: Tag, options?: SearchOptions): AsyncGenerator<VideoInfo[], VideoInfo[]>;
 
     IllegalArgument: Function,
 
@@ -211,16 +234,9 @@ export interface TikTok {
     /**
      * @private
      */
-    _getVideoGenerator(subset: SubsetFunction, count: number, startCur: string, type: GeneratorType): AsyncGenerator<VideoInfo[]>
-
-    /**
-     * Initializes the default settings of the application.
-     * @private
-     */
     init(options: TikTokOptions): Promise<void>;
 
     /**
-     * Signer object used to sign URLs if the program does not use an external signature service.
      * @private
      */
     signer: Signer;

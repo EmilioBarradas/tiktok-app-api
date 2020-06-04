@@ -1,8 +1,9 @@
 import { TikTok, TikTokOptions, User, 
          UserInfo, Video, VideoInfo, 
          Audio, AudioInfo, Tag, TagInfo, 
-         SearchOptions, VideoBatch, SubsetFunction } from './types/core';
-import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, SIGNATURE_NOT_FOUND } from './constants';
+         SearchOptions, VideoBatch } from './types/core';
+import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, 
+         SIGNATURE_NOT_FOUND, DEFAULT_SEARCH_OPTIONS } from './constants';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';
 import { ResourceNotFound } from './errors/ResourceNotFound';
 import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL, 
@@ -37,14 +38,17 @@ app.close = function() {
 }
 
 /**
- * Retrieves the top trending videos on TikTok. Currently returns a maximum of 30 videos.
+ * Retrieves the information of a subset of the trending videos on TikTok.
+ * @param options An optional SearchOptions object that contains the count 
+ *                and starting cursor to use for this request.
+ *                The default count is 30, and default starting cursor is 0.
+ *                Using a count higher than 100 is redundant, as TikTok maxes
+ *                out the amount of videos per request at ~100 videos.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  */
-app.getTrendingVideos = async function(): Promise<VideoInfo[]> {
-    const contentURL = getTrendingContentURL();
-    const content = await this.getTiktokContent(contentURL);
-
-    return content.items.map((v: object) => getVideoInfoFromContent(v));
+app.getTrendingVideos = function(options: SearchOptions = 
+        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[]> {
+    return getVideoGenerator(getTrendingVideosBatch.bind(this), options.count!, options.startCur!, 'Trending');
 }
 
 /**
@@ -94,31 +98,32 @@ app.getUserInfo = async function(identifier: User | string): Promise<UserInfo> {
  * @param options An optional SearchOptions object that contains the count 
  *                and starting cursor to use for this request.
  *                The default count is 30, and default starting cursor is 0.
+ *                Using a count higher than 100 is redundant, as TikTok maxes
+ *                out the amount of videos per request at ~100 videos.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  *          The resolved value will be an empty array if none videos are found.
  * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
  */
 app.getUploadedVideos = function(user: User, options: SearchOptions = 
-        { count: 30, startCur: '0' }): AsyncGenerator<VideoInfo[]> {
+        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[]> {
     return getVideoGenerator(getUploadedVideosBatch.bind(this), options.count!, options.startCur!, user);
 }
 
 /**
- * Retrieves the information of the liked videos of a TikTok user. Currently returns a maximum of 30 videos.
+ * Retrieves the information of a subset of the videos liked by the TikTok user.
  * @param user The User object of a TikTok user.
+ * @param options An optional SearchOptions object that contains the count 
+ *                and starting cursor to use for this request.
+ *                The default count is 30, and default starting cursor is 0.
+ *                Using a count higher than 100 is redundant, as TikTok maxes
+ *                out the amount of videos per request at ~100 videos.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  *          The resolved value will be an empty array if none videos are found.
- * @throws {IllegalArgument} Thrown if the User object does not have it's id property set.
+ * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
  */
-app.getLikedVideos = async function(user: User): Promise<VideoInfo[]> {
-    const contentURL = getLikedVideosContentURL(user);
-    const content = await this.getTiktokContent(contentURL);
-
-    if (typeof content.items === 'undefined') {
-        return [];
-    }
-
-    return content.items.map((v: object) => getVideoInfoFromContent(v));
+app.getLikedVideos = function(user: User, options: SearchOptions = 
+        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[]> {
+    return getVideoGenerator(getLikedVideosBatch.bind(this), options.count!, options.startCur!, user);
 }
 
 /**
@@ -180,16 +185,19 @@ app.getAudioInfo = async function(audio: Audio): Promise<AudioInfo> {
 }
 
 /**
- * Retrieves the top videos of a TikTok audio. Currently returns a maximum of 30 videos.
+ * Retrieves the information of a subset of the top videos of the TikTok audio.
  * @param audio The Audio object of a TikTok audio.
+ * @param options An optional SearchOptions object that contains the count 
+ *                and starting cursor to use for this request.
+ *                The default count is 30, and default starting cursor is 0.
+ *                Using a count higher than 100 is redundant, as TikTok maxes
+ *                out the amount of videos per request at ~100 videos.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  * @throws {IllegalArgument} Thrown if the Audio object does not have it's id property set.
  */
-app.getAudioTopVideos = async function(audio: Audio): Promise<VideoInfo[]> {
-    const contentURL = getAudioTopContentURL(audio);
-    const content = await this.getTiktokContent(contentURL);
-
-    return content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v));
+app.getAudioTopVideos = function(audio: Audio, options: SearchOptions = 
+        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getAudioTopVideosBatch.bind(this), options.count!, options.startCur!, audio)
 }
 
 /**
@@ -222,29 +230,73 @@ app.getTagInfo = async function(identifier: Tag | string): Promise<TagInfo> {
 }
 
 /**
- * Retrieves the top videos of a TikTok tag. Currently returns a maximum of 30 videos.
+ * Retrieves the information of a subset of the top videos of the TikTok tag.
  * @param audio The Tag object of a TikTok tag.
+ * @param options An optional SearchOptions object that contains the count 
+ *                and starting cursor to use for this request.
+ *                The default count is 30, and default starting cursor is 0.
+ *                Using a count higher than 100 is redundant, as TikTok maxes
+ *                out the amount of videos per request at ~100 videos.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  * @throws {IllegalArgument} Thrown if the Tag object does not have it's id property set.
  */
-app.getTagTopVideos = async function(tag: Tag): Promise<VideoInfo[]> {
-    const contentURL = getTagTopContentURL(tag);
-    const content = await this.getTiktokContent(contentURL);
+app.getTagTopVideos = function(tag: Tag, options: SearchOptions = 
+        DEFAULT_SEARCH_OPTIONS): AsyncGenerator<VideoInfo[], VideoInfo[]> {
+    return getVideoGenerator(getTagTopVideosBatch.bind(this), options.count!, options.startCur!, tag);
+}
 
-    return content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v));
+async function getTrendingVideosBatch(this: TikTok, count: number, startCur: string): Promise<VideoBatch> {
+    const contentURL = getTrendingContentURL(count, startCur);
+
+    return getVideosBatch.call(this, contentURL);
 }
 
 async function getUploadedVideosBatch(this: TikTok, count: number, 
         startCur: string, user: User): Promise<VideoBatch> {
     const contentURL = getRecentVideosContentURL(user, count, startCur);
-    const content = await this.getTiktokContent(contentURL);
 
-    return typeof content.items === 'undefined' 
-        ? { 
+    return getVideosBatch.call(this, contentURL);
+}
+
+async function getLikedVideosBatch(this: TikTok, count: number, 
+        startCur: string, user: User): Promise<VideoBatch> {
+    const contentURL = getLikedVideosContentURL(user, count, startCur);
+
+    return getVideosBatch.call(this, contentURL);
+}
+
+async function getVideosBatch(this: TikTok, url: string): Promise<VideoBatch> {
+    const content = await this.getTiktokContent(url);
+
+    return typeof content.items === 'undefined' ? 
+        { 
             videos: [], 
-            cur: '-1' 
+            cur: '-1', 
         } : { 
             videos: content.items.map((v: object) => getVideoInfoFromContent(v)), 
             cur: content.maxCursor, 
         };
+}
+
+async function getAudioTopVideosBatch(this: TikTok, count: number, 
+        startCur: string, audio: Audio): Promise<VideoBatch> {
+    const contentURL = getAudioTopContentURL(audio, count, startCur);
+
+    return getTopVideosBatch.call(this, contentURL);
+}
+
+async function getTagTopVideosBatch(this: TikTok, count: number,
+        startCur: string, tag: Tag): Promise<VideoBatch> {
+    const contentURL = getTagTopContentURL(tag, count, startCur);
+
+    return getTopVideosBatch.call(this, contentURL);
+}
+
+async function getTopVideosBatch(this: TikTok, url: string) {
+    const content = await this.getTiktokContent(url);
+
+    return {
+        videos: content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v)),
+        cur: content.body.maxCursor,
+    }
 }

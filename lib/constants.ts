@@ -1,3 +1,5 @@
+import { SearchOptions } from "./types/core";
+
 export const TYPE_RECENT_VIDEOS = 1;
 export const TYPE_LIKED_VIDEOS  = 2;
 export const TYPE_TAG_VIDEOS = 3;
@@ -7,6 +9,8 @@ export const TYPE_TRENDING_VIDEOS = 5;
 export const ILLEGAL_IDENTIFIER = 10201;
 export const RESOURCE_NOT_FOUND = 10202;
 export const VIDEO_NOT_FOUND = 10204;
+
+export const DEFAULT_SEARCH_OPTIONS: SearchOptions = { count: 30, startCur: '0' };
 
 export const SIGNATURE_NOT_FOUND = 
         '\n\n  In order to run tiktok-app-api without an external signature service, '

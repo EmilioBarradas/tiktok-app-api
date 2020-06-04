@@ -125,7 +125,7 @@ export interface TikTok {
      *          The resolved value will be an empty array if none videos are found.
      * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
      */
-    getUploadedVideos(user: User, options: SearchOptions): AsyncGenerator<VideoInfo[]>;
+    getUploadedVideos(user: User, options?: SearchOptions): AsyncGenerator<VideoInfo[], VideoInfo[]>;
 
     /**
      * Retrieves the information of the liked videos of a TikTok user. Currently returns a maximum of 30 videos.
@@ -211,7 +211,7 @@ export interface TikTok {
     /**
      * @private
      */
-    _getUploadedVideosBatch(count: number, startCur: string, user: User): Promise<VideoBatch>;
+    _getVideoGenerator(subset: SubsetFunction, count: number, startCur: string, type: GeneratorType): AsyncGenerator<VideoInfo[]>
 
     /**
      * Initializes the default settings of the application.

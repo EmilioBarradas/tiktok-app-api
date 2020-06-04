@@ -91,14 +91,16 @@ app.getUserInfo = async function(identifier: User | string): Promise<UserInfo> {
 /**
  * Retrieves the information of a subset of videos uploaded by the TikTok user.
  * @param user The User object of a TikTok user.
- * @param options An optional SearchOptions object that contains the count and starting cursor to use for this request.
+ * @param options An optional SearchOptions object that contains the count 
+ *                and starting cursor to use for this request.
  *                The default count is 30, and default starting cursor is 0.
  * @returns A promise with the resolved value of an array of VideoInfo objects.
  *          The resolved value will be an empty array if none videos are found.
  * @throws `IllegalArgument` Thrown if the User object does not have it's id property set.
  */
-app.getUploadedVideos = function(user: User, options: SearchOptions = { count: 30, startCur: '0' }): AsyncGenerator<VideoInfo[]> {
-    return getVideoGenerator(this._getUploadedVideosBatch, options.count!, options.startCur!, user);
+app.getUploadedVideos = function(user: User, options: SearchOptions = 
+        { count: 30, startCur: '0' }): AsyncGenerator<VideoInfo[]> {
+    return getVideoGenerator(getUploadedVideosBatch.bind(this), options.count!, options.startCur!, user);
 }
 
 /**
@@ -232,7 +234,8 @@ app.getTagTopVideos = async function(tag: Tag): Promise<VideoInfo[]> {
     return content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v));
 }
 
-app._getUploadedVideosBatch = async function(count: number, startCur: string, user: User): Promise<VideoBatch> {
+async function getUploadedVideosBatch(this: TikTok, count: number, 
+        startCur: string, user: User): Promise<VideoBatch> {
     const contentURL = getRecentVideosContentURL(user, count, startCur);
     const content = await this.getTiktokContent(contentURL);
 
@@ -241,7 +244,7 @@ app._getUploadedVideosBatch = async function(count: number, startCur: string, us
             videos: [], 
             cur: '-1' 
         } : { 
-            videos: content.items.map((v: object) => getVideoInfoFromContent(v)),
-            cur: content.maxCursor,
+            videos: content.items.map((v: object) => getVideoInfoFromContent(v)), 
+            cur: content.maxCursor, 
         };
 }

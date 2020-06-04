@@ -122,13 +122,15 @@ export function isSignatureInstalled(): boolean {
 export async function* getVideoGenerator(subset: SubsetFunction, count: number,
         startCur: string, type: GeneratorType): AsyncGenerator<VideoInfo[]> {
     let nextCur = startCur;
-    let batch: VideoBatch;
 
-    do {
-        batch = await subset(count, nextCur, type);
+    while (true) {
+        const batch = await subset(count, nextCur, type);
         nextCur = batch.cur;
-        yield batch.videos;
-    } while (batch.videos.length === count);
 
-    return [];
+        if (batch.videos.length === 0) {
+            return [];
+        }
+
+        yield batch.videos;
+    }
 }

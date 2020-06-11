@@ -107,15 +107,6 @@ async function convertResponse(chunks: Buffer[], encoding: string | undefined, r
     resolve(JSON.parse(decodedBuffer.toString()));
 }
 
-export function isSignatureInstalled(): boolean {
-    try {
-        require.resolve('tiktok-signature');
-    } catch (err) {
-        return false;
-    }
-    return true;
-}
-
 export async function* getVideoGenerator(subset: BatchFunction, count: number,
         startCur: string, type: GeneratorType): AsyncGenerator<VideoInfo[]> {
     let nextCur = startCur;

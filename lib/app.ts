@@ -2,8 +2,7 @@ import { TikTok, TikTokOptions, User,
          UserInfo, Video, VideoInfo, 
          Audio, AudioInfo, Tag, TagInfo, 
          SearchOptions, VideoBatch } from './types/core';
-import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, 
-         SIGNATURE_NOT_FOUND } from './constants';
+import { ILLEGAL_IDENTIFIER, RESOURCE_NOT_FOUND, VIDEO_NOT_FOUND, } from './constants';
 import { IllegalIdentifier } from './errors/IllegalIdentifier';
 import { ResourceNotFound } from './errors/ResourceNotFound';
 import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL, 
@@ -12,7 +11,7 @@ import { getTrendingContentURL, getUserInfoContentURL, getRecentVideosContentURL
 import { getVideoInfoFromContent, getUserFromID, getUserInfoFromContent, 
          getVideoFromID, getAudioFromID, getAudioInfoFromContent, 
          getTagInfoFromContent, getVideoInfoFromTopContent } from './constructor';
-import { isSignatureInstalled, getVideoGenerator } from './utility';
+import { getVideoGenerator } from './utility';
 
 export const app = {} as TikTok;
 
@@ -21,11 +20,6 @@ export const app = {} as TikTok;
  * @private
  */
 app.init = async function(options: TikTokOptions): Promise<void> {
-    if (!options.signatureService && !isSignatureInstalled()) {
-        console.error(SIGNATURE_NOT_FOUND);
-        process.exit(1);
-    }
-
     this.options = options;
 }
 

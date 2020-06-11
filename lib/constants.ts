@@ -15,3 +15,5 @@ export const SIGNATURE_NOT_FOUND =
         + 'you must install tiktok-signature.'
         + '\n\n\n\t\x1b[4mnpm i tiktok-signature\x1b[0m\n\n\n'
         + '  Learn more at https://github.com/TikStock/tiktok-app-api#options.\n\n'
+
+export const DEFAULT_SIGNATURE_SERVICE = 'https://35.223.247.100/api/sign';

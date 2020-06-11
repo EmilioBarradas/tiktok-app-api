@@ -71,8 +71,9 @@ interface SearchOptions {
     startCur?: string,
 }
 
-interface Signer {
-    close(): void;
+interface SignatureResponse {
+    signature: string,
+    token: string,
 }
 
 export interface TikTok {
@@ -239,25 +240,10 @@ export interface TikTok {
     /**
      * @private
      */
-    signer: Signer;
-
-    /**
-     * @private
-     */
     getTiktokContent: Function;
 
     /**
      * @private
      */
     signURL: Function;
-
-    /**
-     * @private
-     */
-    getNewSigner: Function;
-
-    /**
-     * @private
-     */
-    sign: Function;
 }

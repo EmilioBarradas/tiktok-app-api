@@ -27,14 +27,12 @@ app.init = async function(options: TikTokOptions): Promise<void> {
     }
 
     this.options = options;
-    this.signer = options.signatureService ? null : await this.getNewSigner();
 }
 
 /**
  * Shuts down the application.
  */
 app.close = function() {
-    this.signer.close();
 }
 
 /**

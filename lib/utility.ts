@@ -5,7 +5,8 @@ import zlib = require('zlib');
 import merge = require('merge-descriptors');
 
 import { IncomingMessage } from 'http';
-import { VideoInfo, BatchFunction, VideoBatch, GeneratorType } from './types/core';
+import { VideoInfo, BatchFunction, VideoBatch, GeneratorType, SignatureResponse } from './types/core';
+import { DEFAULT_SIGNATURE_SERVICE } from './constants';
 
 const gunzip = util.promisify(zlib.gunzip);
 const deflate = util.promisify(zlib.deflate);
@@ -16,7 +17,7 @@ const getTemplate = {
         'method': 'GET',
         'accept-encoding': 'gzip, deflate, br',
         'referer': 'https://www.tiktok.com/trending?lang=en',
-        'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36'
     }
 }
 
@@ -36,18 +37,14 @@ utility.getTiktokContent = async function(url: string): Promise<object> {
 }
 
 utility.signURL = async function(url: string): Promise<string> {
-    let body;
+    const signatureService = this.options.signatureService || DEFAULT_SIGNATURE_SERVICE;
+    const body = await post(signatureService, { url: url });
 
-    if (this.options.signatureService) {
-        body = await post(this.options.signatureService, { url: url });
-    } else {
-        body = await this.sign(url);
-    }
-
-    return url + '&verifyFp=' + body.token + '&_signature=' + body.signature;
+    // Temporarily removed token because it is not required for some URLs.
+    return url + '&_signature=' + body.signature;
 }
 
-async function post(urlStr: string, body: object): Promise<object> {
+async function post(urlStr: string, body: object): Promise<SignatureResponse> {
     const url = new URL(urlStr);
 
     const requestArgs = {

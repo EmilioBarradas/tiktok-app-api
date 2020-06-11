@@ -5,7 +5,7 @@ import zlib = require('zlib');
 import merge = require('merge-descriptors');
 
 import { IncomingMessage } from 'http';
-import { VideoInfo, BatchFunction, VideoBatch, GeneratorType, SignatureResponse } from './types/core';
+import { VideoInfo, BatchFunction, GeneratorType, SignatureResponse } from './types/core';
 import { DEFAULT_SIGNATURE_SERVICE } from './constants';
 
 const gunzip = util.promisify(zlib.gunzip);
@@ -40,7 +40,7 @@ utility.signURL = async function(url: string): Promise<string> {
     const signatureService = this.options.signatureService || DEFAULT_SIGNATURE_SERVICE;
     const body = await post(signatureService, { url: url });
 
-    // Temporarily removed token because it is not required for some URLs.
+    // Temporarily removed verification token because it is not required for some URLs.
     return url + '&_signature=' + body.signature;
 }
 

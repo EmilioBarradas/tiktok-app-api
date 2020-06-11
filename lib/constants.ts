@@ -1,5 +1,3 @@
-import { SearchOptions } from "./types/core";
-
 export const TYPE_RECENT_VIDEOS = 1;
 export const TYPE_LIKED_VIDEOS  = 2;
 export const TYPE_TAG_VIDEOS = 3;

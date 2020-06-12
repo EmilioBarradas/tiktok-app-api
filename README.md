@@ -1,6 +1,6 @@
 # TikTok API
 
-This is an unofficial Node.js implementation of the TikTok API. This module is not endorsed by, directly affiliated with, maintained, authorized, or sponsored by TikTok. Their internal API could change at any moment, and break this module's code. I try my best to maintain it, and keep it up-to-date. If you find bugs or have any questions, please submit an issue, and I will try my best to help you out.
+This is an unofficial TypeScript and Node.js implementation of the TikTok API. This module is not endorsed by, directly affiliated with, maintained, authorized, or sponsored by TikTok. Their internal API could change at any moment, and break this module's code. I try my best to maintain it, and keep it up-to-date. If you find bugs or have any questions, please submit an issue, and I will try my best to help you out.
 
 Table of Contents
 ---
@@ -10,6 +10,7 @@ Table of Contents
 * [Usage](#usage)
   * [Application Instance](#application-instance)
   * [Options](#options)
+  * [SearchOptions](#search-options)
   * [Trending](#trending)
   * [Users](#users)
   * [Videos](#videos)
@@ -17,6 +18,7 @@ Table of Contents
   * [Tags](#tags)
 * [Object Reference](#object-reference)
   * [TikTokOptions](#tiktokoptions)
+  * [SearchOptions](#searchoptions)
   * [User](#user)
   * [UserInfo](#userinfo)
   * [Video](#video)
@@ -36,34 +38,34 @@ const tiktok = require('tiktok-app-api');
 
 let tiktokApp;
 
-main();
-
-async function main() {
+(async () => {
   tiktokApp = await tiktok();
 
   const user = await tiktokApp.getUserByName('example');
   const userInfo = await tiktokApp.getUserInfo(user);
 
   console.log(userInfo.followerCount);
-}
+})();
 ```
 
-Get the tags of the top trending video:
+Get the tags of the top trending videos:
 
 ```javascript
 const tiktok = require('tiktok-app-api');
 
 let tiktokApp;
 
-main();
-
-async function main() {
+(async () => {
   tiktokApp = await tiktok();
 
-  const trendingVideos = await tiktokApp.getTrendingVideos();
+  const iterator = tiktokApp.getTrendingVideos();
+  const videosResult = await iterator.next();
+  const trendingVideos = videosResult.value;
 
-  console.log(trendingVideos[0].tags);
-}
+  const tags = trendingVideos.map(v => v.tags);
+
+  console.log(tags);
+})();
 ```
 
 Take a look at [tiktok-web-api-example](https://github.com/tikstock/tiktok-web-api-example) for an up-to-date web API using this module.
@@ -76,14 +78,6 @@ Install the API:
 ```console
 npm i tiktok-app-api
 ```
-
-If you would like to run the default signature service, you must also install tiktok-signature. To setup an independent signature service, take a look at [tiktok-signature-api](https://github.com/tikstock/tiktok-signature-api).
-
-```console
-npm i tiktok-signature
-```
-
-[Puppeteer](https://github.com/puppeteer/puppeteer) will be installed alongside tiktok-signature, as API requests will be made through a headless browser instance.
 
 Import into your program.
 
@@ -108,14 +102,12 @@ const tiktok = require('tiktok-app-api');
 
 let tiktokApp;
 
-main();
-
-async function main() {
+(async () => {
   tiktokApp = await tiktok();
-}
+})();
 ```
 
-While instantiating a new instance of the application, the default signature service, if being used, and any default settings of the application will be set up.
+While instantiating a new instance of the application, the application's settings wil be set up.
 
 ### Options
 
@@ -123,16 +115,36 @@ If you would like to use your own signature service instead of the default optio
 
 ```javascript
 const tiktokApp = await tiktok({
-  signatureService: 'http://localhost:8000/api/sign'
+  signatureService: 'http://localhost:8000/api/sign',
 });
 ```
+
+### Search Options
+
+Throughout the API, you may want to modify the starting point or count of a request. This is possible by specifying an SearchOptions object in a request. See [SeachOptions](#searchoptions) for a definition of the SearchOptions object. 
+
+```javascript
+const options = {
+  cursor: '0',
+  count: 30,
+};
+// usage examples:
+const trendingIterator = tiktokApp.getTrendingVideos(options);
+const uploadedIterator = tiktokApp.getUploadedVideos(user, options);
+const likedIterator = tiktokApp.getLikedVideos(user, options);
+// etc.
+```
+
+Any request which takes a SearchOptions object will return an async iterator, which will lazily load the next batch of videos when requested.
 
 ### Trending
 
 To get the top trending videos using the API is as simple as:
 
 ```javascript
-const trendingVideos = await tiktokApp.getTrendingVideos();
+const iterator = tiktokApp.getTrendingVideos();
+const videosResult = await iterator.next();
+const trendingVideos = videosResult.value;
 
 console.log(trendingVideos);
 ```
@@ -174,9 +186,11 @@ Now, let's get the user's lastest videos:
 See [VideoInfo](#videoinfo) for a definition of the VideoInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L88).
 
 ```javascript
-const recentVideos = await tiktokApp.getRecentVideos(user);
+const iterator = tiktokApp.getUploadedVideos(user);
+const videosResult = await iterator.next();
+const uploadedVideos = videosResult.value;
 
-console.log(recentVideos);
+console.log(uploadedVideos);
 ```
 
 Same idea, we can get the user's liked videos:
@@ -184,7 +198,9 @@ Same idea, we can get the user's liked videos:
 May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L106).
 
 ```javascript
-const likedVideos = await tiktokApp.getLikedVideos(user);
+const iterator = tiktokApp.getLikedVideos(user);
+const videosResult = await iterator.next();
+const likedVideos = videosResult.value;
 
 console.log(likedVideos);
 ```
@@ -238,7 +254,9 @@ To get the top videos related to an audio:
 The first object of this VideoInfo array will be the original video with the audio. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L182).
 
 ```javascript
-const topVideos = await tiktokApp.getAudioTopVideos(audio);
+const iterator = tiktokApp.getAudioTopVideos(audio);
+const videosResult = await iterator.next();
+const topVideos = videosResult.value;
 
 console.log(topVideos[0]);
 ```
@@ -270,7 +288,9 @@ To get the top videos of a tag:
 May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L224).
 
 ```javascript
-const topVideos = await tiktokApp.getTagTopVideos(tag);
+const iterator = tiktokApp.getTagTopVideos(tag);
+const videosResult = await iterator.next();
+const topVideos = videosResult.value;
 
 console.log(topVideos);
 ```
@@ -283,7 +303,15 @@ Below you will find the data that each object contains.
 ### TikTokOptions
 ```yaml
 TikTokOptions {
-  signatureService?: string // Not required.
+  signatureService?: string, // Not required.
+}
+```
+
+### SearchOptions
+```yaml
+SearchOptions {
+  count?: number, // Not required.
+  cusrsor?: string, // Not required.
 }
 ```
 
@@ -291,7 +319,7 @@ TikTokOptions {
 ```yaml
 User {
   id: string,
-  username?: string // Not required initially.
+  username?: string, // Not required initially.
 }
 ```
 
@@ -306,7 +334,7 @@ UserInfo {
   followingCount: number,
   followerCount: number,
   likeCount: number,
-  videoCount: number
+  videoCount: number,
 }
 ```
 
@@ -314,7 +342,7 @@ UserInfo {
 
 ```yaml
 Video {
-  id: string
+  id: string,
 }
 ```
 
@@ -330,7 +358,7 @@ VideoInfo {
   shareCount: number,
   description: string,
   tags: Tag[],
-  audio: AudioInfo
+  audio: AudioInfo,
 }
 ```
 
@@ -338,7 +366,7 @@ VideoInfo {
 
 ```yaml
 Audio {
-  id: string
+  id: string,
 }
 ```
 
@@ -347,7 +375,7 @@ Audio {
 ```yaml
 AudioInfo {
   id: string,
-  title: string
+  title: string,
 }
 ```
 
@@ -356,7 +384,7 @@ AudioInfo {
 ```yaml
 Tag {
   id: string,
-  title: string
+  title: string,
 }
 ```
 
@@ -367,6 +395,6 @@ TagInfo {
   tag: Tag,
   description: string,
   videoCount: number,
-  viewCount: number
+  viewCount: number,
 }
 ```

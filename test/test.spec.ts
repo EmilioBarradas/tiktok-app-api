@@ -47,6 +47,24 @@ describe('Application', function() {
             expect(body).to.not.be.empty;
         });
     });
+
+    describe('Options', function() {
+        let tempApp: tiktok.TikTok;
+
+        before(async function() {
+            tempApp = await tiktok({
+                signatureService: 'https://example.com',
+            });
+        });
+
+        it('options is defined', function() {
+            expect(tempApp.options).to.not.be.undefined;
+        });
+
+        it('signature service is defined', function() {
+            expect(tempApp.options.signatureService).to.equal('https://example.com');
+        });
+    });
 });
 
 describe('TikTok API', function() {
@@ -294,6 +312,20 @@ describe('TikTok API', function() {
             expect(videos).to.satisfy(function(videos: tiktok.VideoInfo[]) {
                 return videos.every((video: tiktok.VideoInfo) => video.video != null);
             })
+        });
+    });
+
+    describe('Search Options', function() {
+
+        it('count is used', async function() {
+            const it = app.getTrendingVideos({
+                count: 50,
+            });
+            const videoResult = await it.next();
+            const videos = videoResult.value;
+
+            // TikTok does not always return 50 videos.
+            expect(videos.length).to.be.approximately(50, 5);
         });
     });
 

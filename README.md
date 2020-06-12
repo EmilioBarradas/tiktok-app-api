@@ -107,7 +107,7 @@ let tiktokApp;
 })();
 ```
 
-While instantiating a new instance of the application, the application's settings wil be set up.
+While instantiating a new instance of the application, the application's settings will be set up.
 
 ### Options
 
@@ -121,7 +121,7 @@ const tiktokApp = await tiktok({
 
 ### Search Options
 
-Throughout the API, you may want to modify the starting point or count of a request. This is possible by specifying an SearchOptions object in a request. See [SeachOptions](#searchoptions) for a definition of the SearchOptions object. 
+Throughout the API, you may want to modify the starting point or count of a request. This is possible by specifying a SearchOptions object in a request. See [SeachOptions](#searchoptions) for a definition of the SearchOptions object.
 
 ```javascript
 const options = {
@@ -155,7 +155,7 @@ To retrieve User information within the API, you will first need to get a User o
 
 Get a User object from a TikTok user's username:
 
-Will fetch ID of user from TikTok API. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L47).
+Will fetch ID of user from TikTok API. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L46).
 
 ```javascript
 const user = await tiktokApp.getUserByName('example');
@@ -173,7 +173,7 @@ Take note that getUserByID(id) does not return a promise, as it does not fetch a
 
 Now that we have a User object, we can retrieve some information from the TikTok user:
 
-See [UserInfo](#userinfo) for a defintion of the UserInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L67).
+See [UserInfo](#userinfo) for a defintion of the UserInfo object. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L66).
 
 ```javascript
 const userInfo = await tiktokApp.getUserInfo(user);
@@ -181,9 +181,9 @@ const userInfo = await tiktokApp.getUserInfo(user);
 console.log(userInfo.followingCount, userInfo.followerCount, userInfo.likeCount);
 ```
 
-Now, let's get the user's lastest videos:
+Now, let's get the user's uploaded videos:
 
-See [VideoInfo](#videoinfo) for a definition of the VideoInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L88).
+See [VideoInfo](#videoinfo) for a definition of the VideoInfo object. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L87).
 
 ```javascript
 const iterator = tiktokApp.getUploadedVideos(user);
@@ -195,7 +195,7 @@ console.log(uploadedVideos);
 
 Same idea, we can get the user's liked videos:
 
-May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L106).
+May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L104).
 
 ```javascript
 const iterator = tiktokApp.getLikedVideos(user);
@@ -219,7 +219,7 @@ Take note that getVideo(id) does not return a promise, as it does not fetch any 
 
 Now to get the information of this video:
 
-May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L132).
+May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L129).
 
 ```javascript
 const videoInfo = await tiktokApp.getVideoInfo(video);
@@ -241,7 +241,7 @@ Take note that getAudio(id) does not return a promise, as it does not fetch any 
 
 To get the information related to the audio:
 
-See [AudioInfo](#audioinfo) for a definition of the AudioInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L161).
+See [AudioInfo](#audioinfo) for a definition of the AudioInfo object. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L158).
 
 ```javascript
 const audioInfo = await tiktokApp.getAudioInfo(audio);
@@ -251,7 +251,7 @@ console.log(audioInfo.title, audioInfo.audio.title);
 
 To get the top videos related to an audio:
 
-The first object of this VideoInfo array will be the original video with the audio. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L182).
+The first object of this VideoInfo array will be the original video with the audio. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L179).
 
 ```javascript
 const iterator = tiktokApp.getAudioTopVideos(audio);
@@ -267,7 +267,7 @@ Finally we have TikTok tags.
 
 Just like Users, Videos, and Audios, we need a Tag object.
 
-Will fetch the title from the TikTok API, therefore this function returns a promise. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L195).
+Will fetch the title from the TikTok API, therefore this function returns a promise. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L195).
 
 ```javascript
 const tag = await tiktokApp.getTag('fyp');
@@ -275,7 +275,7 @@ const tag = await tiktokApp.getTag('fyp');
 
 To retrieve the information associated with the tag:
 
-See [TagInfo](#taginfo) for a definition of the TagInfo object. May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#206).
+See [TagInfo](#taginfo) for a definition of the TagInfo object. May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#206).
 
 ```javascript
 const tagInfo = await tiktokApp.getTagInfo(tag);
@@ -285,7 +285,7 @@ console.log(tagInfo.description, tagInfo.videoCount, tagInfo.viewCount);
 
 To get the top videos of a tag:
 
-May throw an error in certain situations, see [here](../c316a7cd2500e6242f22ec0d35bc145160db292c/lib/app.ts#L224).
+May throw an error in certain situations, see [here](../d04bef26f85b1b0ad5551c23bc6f7056a6242a7e/lib/app.ts#L224).
 
 ```javascript
 const iterator = tiktokApp.getTagTopVideos(tag);

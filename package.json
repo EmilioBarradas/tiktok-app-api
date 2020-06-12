@@ -10,7 +10,7 @@
     "scripts": {
         "prepare": "npm run build",
         "build": "rimraf dist && tsc && copy lib\\types\\**.d.ts dist",
-        "test": "echo \"Error: no test specified\""
+        "test": "mocha -r ts-node/register test/**/*.spec.ts"
     },
     "repository": {
         "type": "git",
@@ -26,9 +26,14 @@
     },
     "homepage": "https://github.com/TikStock/tiktok-app-api#readme",
     "devDependencies": {
+        "@types/chai": "^4.2.11",
         "@types/merge-descriptors": "^1.0.1",
-        "@types/request": "^2.48.5",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^14.0.13",
+        "chai": "^4.2.0",
+        "mocha": "^8.0.1",
         "rimraf": "^3.0.2",
+        "ts-node": "^8.10.2",
         "typescript": "^3.9.3"
     },
     "dependencies": {

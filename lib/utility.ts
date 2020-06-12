@@ -65,7 +65,7 @@ async function post(urlStr: string, body: object): Promise<SignatureResponse> {
     });
 }
 
-async function getBody(urlStr: string): Promise<object> {
+export async function getBody(urlStr: string): Promise<object> {
     const url = new URL(urlStr);
 
     const requestArgs: any = {

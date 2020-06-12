@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es2015",
         "module": "commonjs",
         "outDir": "./dist",
-        "strict": true
-    }
+        "strict": true,
+    },
+    "exclude": ["test"]
 }

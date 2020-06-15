@@ -9,7 +9,7 @@
     },
     "scripts": {
         "prepare": "npm run build",
-        "build": "npm run test && rimraf dist && tsc && copy lib\\types\\**.d.ts dist",
+        "build": "rimraf dist && tsc && copy lib\\types\\**.d.ts dist",
         "test": "mocha -r ts-node/register test/**/*.spec.ts"
     },
     "repository": {

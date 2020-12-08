@@ -36,10 +36,6 @@ export function getVideoInfoFromContent(obj: any): VideoInfo {
         ? obj.challenges.map((t: object) => getTagFromContent(t)) 
         : [];
 
-    const audio: Nullable<AudioInfo> = typeof obj.music !== 'undefined' 
-        ? { audio: { id: obj.music.id, }, title: obj.music.title, } 
-        : null;
-
     return {
         video: {
             id: obj.id,
@@ -54,7 +50,7 @@ export function getVideoInfoFromContent(obj: any): VideoInfo {
         shareCount: obj.stats.shareCount,
         description: obj.desc,
         tags: tags,
-        audio: audio,
+        audio: getAudioInfoFromContent(obj),
     }
 }
 
@@ -73,12 +69,7 @@ export function getVideoInfoFromTopContent(obj: any): VideoInfo {
         shareCount: obj.itemInfos.shareCount,
         description: obj.itemInfos.text,
         tags: obj.challengeInfoList.map((t: object) => getTagFromTopContent(t)),
-        audio: {
-            audio: {
-                id: obj.musicInfos.musicId,
-            },
-            title: obj.musicInfos.musicName,
-        },
+        audio: getAudioInfoFromContent(obj),
     }
 }
 
@@ -89,11 +80,36 @@ export function getAudioFromID(id: string): Audio {
 }
 
 export function getAudioInfoFromContent(obj: any): AudioInfo {
+    if (typeof obj.musicInfos !== 'undefined') {
+        return {
+            audio: {
+                id: obj.musicInfos.musicId,
+            },
+            title: obj.musicInfos.musicName,
+            authorName: obj.musicInfos.authorName,
+            covers: {
+                small: obj.musicInfos.covers[0],
+                medium: obj.musicInfos.coversMedium[0],
+                large: obj.musicInfos.coversLarger[0],
+            },
+            duration: -1,
+        }
+    }
+
+    let musicObj = typeof obj.musicInfo !== 'undefined' ? obj.musicInfo.music : obj.music;
+
     return {
         audio: {
-            id: obj.musicInfo.music.id,
+            id: musicObj.id,
         },
-        title: obj.musicInfo.music.title,
+        title: musicObj.title,
+        authorName: musicObj.authorName,
+        covers: {
+            small: musicObj.coverThumb,
+            medium: musicObj.coverMedium,
+            large: musicObj.coverLarge,
+        },
+        duration: musicObj.duration,
     }
 }
 

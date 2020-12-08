@@ -43,6 +43,15 @@ interface Audio {
 interface AudioInfo {
     audio: Audio,
     title: string,
+    authorName: string,
+    covers: CoverImages,
+    duration: number,
+}
+
+interface CoverImages {
+    small: string,
+    medium: string,
+    large: string,
 }
 
 interface Tag {

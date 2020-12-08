@@ -6,7 +6,7 @@ import merge = require('merge-descriptors');
 
 import { IncomingMessage } from 'http';
 import { VideoInfo, BatchFunction, GeneratorType, SignatureResponse } from './types/core';
-import { DEFAULT_SIGNATURE_SERVICE } from './constants';
+import { DEFAULT_SIGNATURE_SERVICE, SIGN_URL_ERROR } from './constants';
 
 const gunzip = util.promisify(zlib.gunzip);
 const deflate = util.promisify(zlib.deflate);
@@ -38,7 +38,13 @@ utility.getTiktokContent = async function(url: string): Promise<object> {
 
 utility.signURL = async function(url: string): Promise<string> {
     const signatureService = this.options.signatureService || DEFAULT_SIGNATURE_SERVICE;
-    const body = await post(signatureService, { url: url });
+
+    let body;
+    try {
+        body = await post(signatureService, { url: url });
+    } catch (err) {
+        throw Error(SIGN_URL_ERROR);
+    }
 
     // Temporarily removed verification token because it is not required for some URLs.
     return url + '&_signature=' + body.signature;

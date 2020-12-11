@@ -9,14 +9,14 @@ export function getTrendingContentURL(count: number, startCur: string) {
 
 export function getUserInfoContentURL(identifier: User | string): string {
     if (typeof identifier === 'string') {
-        return 'https://m.tiktok.com/api/user/detail/?uniqueId=' + identifier;
+        return 'https://www.tiktok.com/node/share/user/@' + identifier + '?appId=1233';
     }
 
     if (typeof identifier.username === 'undefined') {
         throw new IllegalArgument("Passed User must have a username set.");
     }
 
-    return 'https://m.tiktok.com/api/user/detail/?uniqueId=' + identifier.username;
+    return 'https://www.tiktok.com/node/share/user/@' + identifier.username + '?appId=1233';
 }
 
 export function getRecentVideosContentURL(user: User, count: number, startCur: string): string {

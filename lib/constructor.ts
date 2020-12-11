@@ -92,6 +92,7 @@ export function getAudioInfoFromContent(obj: any): AudioInfo {
                 medium: obj.musicInfos.coversMedium[0],
                 large: obj.musicInfos.coversLarger[0],
             },
+            url: obj.musicInfos.playUrl,
             duration: -1,
         }
     }
@@ -109,6 +110,7 @@ export function getAudioInfoFromContent(obj: any): AudioInfo {
             medium: musicObj.coverMedium,
             large: musicObj.coverLarge,
         },
+        url: musicObj.playUrl,
         duration: musicObj.duration,
     }
 }

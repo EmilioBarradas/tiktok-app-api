@@ -45,6 +45,7 @@ interface AudioInfo {
     title: string,
     authorName: string,
     covers: CoverImages,
+    url: string,
     duration: number,
 }
 

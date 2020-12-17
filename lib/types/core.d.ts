@@ -57,7 +57,7 @@ interface CoverImages {
 
 interface Tag {
     id: string,
-    title: string,
+    title?: string,
 }
 
 interface TagInfo {
@@ -83,7 +83,7 @@ interface SearchOptions {
 
 interface SignatureResponse {
     signature: string,
-    token: string,
+    verifyFp: string,
 }
 
 export interface TikTok {

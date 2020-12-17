@@ -47,7 +47,7 @@ utility.signURL = async function(url: string): Promise<string> {
     }
 
     // Temporarily removed verification token because it is not required for some URLs.
-    return url + '&_signature=' + body.signature;
+    return url + '&_signature=' + body.signature + '&verifyFp=' + body.verifyFp;
 }
 
 async function post(urlStr: string, body: object): Promise<SignatureResponse> {
@@ -61,7 +61,7 @@ async function post(urlStr: string, body: object): Promise<SignatureResponse> {
     merge(requestArgs, postTemplate);
 
     return new Promise((resolve, reject) => {
-        const req = http.request(requestArgs, res => handleResponse(res, resolve));
+        const req = http.request(requestArgs, res => handleResponse(res, resolve, reject));
 
         req.on('error', reject);
 
@@ -82,21 +82,21 @@ export async function getBody(urlStr: string): Promise<object> {
     merge(requestArgs, getTemplate);
 
     return new Promise((resolve, reject) => {
-        const req = https.get(requestArgs, res => handleResponse(res, resolve));
+        const req = https.get(requestArgs, res => handleResponse(res, resolve, reject));
 
         req.on('error', reject);
     });
 }
 
-function handleResponse(res: IncomingMessage, resolve: Function): void {
+function handleResponse(res: IncomingMessage, resolve: Function, reject: Function): void {
     let chunks: any = [];
 
     res.on('data', chunk => chunks.push(chunk));
 
-    res.on('end', () => convertResponse(chunks, res.headers['content-encoding'], resolve));
+    res.on('end', () => convertResponse(chunks, res.headers['content-encoding'], resolve, reject));
 }
 
-async function convertResponse(chunks: Buffer[], encoding: string | undefined, resolve: Function): Promise<void> {
+async function convertResponse(chunks: Buffer[], encoding: string | undefined, resolve: Function, reject: Function): Promise<void> {
     const buffer = Buffer.concat(chunks);
 
     let decodedBuffer: Buffer;
@@ -108,6 +108,13 @@ async function convertResponse(chunks: Buffer[], encoding: string | undefined, r
         decodedBuffer = await brotli(buffer);
     } else {
         decodedBuffer = buffer;
+    }
+
+    const string = decodedBuffer.toString();
+
+    if (string.length == 0) {
+        reject("TikTok sent back an empty response. This is not supposed to happen. Report it if you can.");
+        return;
     }
 
     resolve(JSON.parse(decodedBuffer.toString()));

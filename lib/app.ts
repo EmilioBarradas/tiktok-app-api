@@ -198,9 +198,7 @@ app.getAudioTopVideos = function(audio: Audio, { count = 30, startCur = '0' }: S
  * @throws {ResourceNotFound} Thrown if a Tag with the id is not found.
  */
 app.getTag = async function(id: string): Promise<Tag> {
-    const tagInfo = await this.getTagInfo(id);
-
-    return tagInfo.tag;
+    return { id };
 }
 
 /**
@@ -288,7 +286,7 @@ async function getTopVideosBatch(this: TikTok, url: string) {
     const content = await this.getTiktokContent(url);
 
     return {
-        videos: content.body.itemListData.map((v: object) => getVideoInfoFromTopContent(v)),
-        cur: content.body.maxCursor,
+        videos: content.itemList.map((v: object) => getVideoInfoFromTopContent(v)),
+        cur: content.cursor,
     }
 }

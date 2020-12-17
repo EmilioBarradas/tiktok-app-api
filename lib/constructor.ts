@@ -55,20 +55,22 @@ export function getVideoInfoFromContent(obj: any): VideoInfo {
 }
 
 export function getVideoInfoFromTopContent(obj: any): VideoInfo {
+    const tags = typeof obj.challengs !== 'undefined' ? obj.challenges.map((t: object) => getTagFromTopContent(t)) : [];
+
     return {
         video: {
-            id: obj.itemInfos.id,
+            id: obj.id,
         },
         author: {
-            id: obj.authorInfos.userId,
-            username: obj.authorInfos.uniqueId,
+            id: obj.author.id,
+            username: obj.author.uniqueId,
         },
-        playCount: obj.itemInfos.playCount,
-        likeCount: obj.itemInfos.diggCount,
-        commentCount: obj.itemInfos.commentCount,
-        shareCount: obj.itemInfos.shareCount,
-        description: obj.itemInfos.text,
-        tags: obj.challengeInfoList.map((t: object) => getTagFromTopContent(t)),
+        playCount: obj.stats.playCount,
+        likeCount: obj.stats.diggCount,
+        commentCount: obj.stats.commentCount,
+        shareCount: obj.stats.shareCount,
+        description: obj.desc,
+        tags: tags,
         audio: getAudioInfoFromContent(obj),
     }
 }
@@ -124,8 +126,8 @@ export function getTagFromContent(obj: any): Tag {
 
 export function getTagFromTopContent(obj: any): Tag {
     return {
-        id: obj.challengeId,
-        title: obj.challengeName,
+        id: obj.id,
+        title: obj.title,
     }
 }
 

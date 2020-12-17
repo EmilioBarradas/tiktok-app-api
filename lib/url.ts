@@ -1,22 +1,20 @@
 import { User, Video, Audio, Tag } from './types/core';
-import { TYPE_RECENT_VIDEOS, TYPE_LIKED_VIDEOS, TYPE_TAG_VIDEOS, TYPE_AUDIO_VIDEOS, TYPE_TRENDING_VIDEOS } from './constants';
+import { TYPE_RECENT_VIDEOS, TYPE_LIKED_VIDEOS, TYPE_TRENDING_VIDEOS } from './constants';
 import { IllegalArgument } from './errors/IllegalArgument';
 
 export function getTrendingContentURL(count: number, startCur: string) {
-    return 'https://m.tiktok.com/api/item_list/?count=' + count + '&id=1&type='
-            + TYPE_TRENDING_VIDEOS + '&secUid=&maxCursor=' + startCur + '&minCursor=0&sourceType=12&appId=1233';
+    return 'https://m.tiktok.com/api/item_list/?user_agent=&minCursor=0'
+         + `&maxCursor=${startCur}&count=${count}&sourceType=${TYPE_TRENDING_VIDEOS}`;
 }
 
 export function getUserInfoContentURL(identifier: User | string): string {
-    if (typeof identifier === 'string') {
-        return 'https://www.tiktok.com/node/share/user/@' + identifier + '?appId=1233';
-    }
+    let uniqueId = typeof identifier === 'string' ? identifier : identifier.username;
 
-    if (typeof identifier.username === 'undefined') {
+    if (typeof uniqueId === 'undefined') {
         throw new IllegalArgument("Passed User must have a username set.");
     }
 
-    return 'https://www.tiktok.com/node/share/user/@' + identifier.username + '?appId=1233';
+    return `https://www.tiktok.com/node/share/user/@${uniqueId}?user_agent=`;
 }
 
 export function getRecentVideosContentURL(user: User, count: number, startCur: string): string {
@@ -24,8 +22,8 @@ export function getRecentVideosContentURL(user: User, count: number, startCur: s
         throw new IllegalArgument("Passed User must have an id set.");
     }
 
-    return 'https://m.tiktok.com/api/item_list/?count=' + count + '&id=' + user.id + '&type=' 
-            + TYPE_RECENT_VIDEOS + '&secUid=&maxCursor=' + startCur + '&minCursor=0&sourceType=8&appId=1233';
+    return 'https://m.tiktok.com/api/item_list/?user_agent=&minCursor=0'
+         + `&maxCursor=${startCur}&id=${user.id}&count=${count}&sourceType=${TYPE_RECENT_VIDEOS}`;
 }
 
 export function getLikedVideosContentURL(user: User, count: number, startCur: string): string {
@@ -33,8 +31,8 @@ export function getLikedVideosContentURL(user: User, count: number, startCur: st
         throw new IllegalArgument("Passed User must have an id set.");
     }
 
-    return 'https://m.tiktok.com/api/item_list/?count=' + count + '&id=' + user.id + '&type=' 
-            + TYPE_LIKED_VIDEOS + '&secUid=&maxCursor=' + startCur + '&minCursor=0&sourceType=9&appId=1233';
+    return 'https://m.tiktok.com/api/item_list/?user_agent=&minCursor=0'
+         + `&maxCursor=${startCur}&id=${user.id}&count=${count}&sourceType=${TYPE_LIKED_VIDEOS}`;
 }
 
 export function getVideoInfoContentURL(video: Video): string {
@@ -42,7 +40,7 @@ export function getVideoInfoContentURL(video: Video): string {
         throw new IllegalArgument("Passed Video must have an id set.");
     }
 
-    return 'https://m.tiktok.com/api/item/detail/?itemId=' + video.id;
+    return `https://m.tiktok.com/api/item/detail/?agent_user=&itemId=${video.id}`;
 }
 
 export function getAudioInfoContentURL(audio: Audio): string {
@@ -50,8 +48,7 @@ export function getAudioInfoContentURL(audio: Audio): string {
         throw new IllegalArgument("Passed Audio must have an id set.");
     }
 
-    return 'https://m.tiktok.com/api/music/detail/?musicId=' + audio.id
-            + '&language=en';
+    return `https://m.tiktok.com/api/music/detail/?agent_user=&musicId=${audio.id}&language=en`;
 }
 
 export function getAudioTopContentURL(audio: Audio, count: number, startCur: string): string {
@@ -59,22 +56,17 @@ export function getAudioTopContentURL(audio: Audio, count: number, startCur: str
         throw new IllegalArgument("Passed Audio must have an id set.");
     }
 
-    return 'https://m.tiktok.com/share/item/list?secUid=&id=' + audio.id + '&type=' 
-            + TYPE_AUDIO_VIDEOS + '&count=' + count + '&minCursor=0&maxCursor=' + startCur + '&shareUid=';
+    return `https://m.tiktok.com/api/music/item_list/?aid=1988&musicID=${audio.id}&count=${count}&cursor=${startCur}`;
 }
 
 export function getTagInfoContentURL(identifier: Tag | string): string {
-    if (typeof identifier === 'string') {
-        return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier
-                + '&language=en';
+    let uniqueId = typeof identifier === 'string' ? identifier : identifier.id;
+
+    if (typeof uniqueId === 'undefined') {
+        throw new IllegalArgument("Passed Tag must have an id set.");
     }
 
-    if (typeof identifier.title === 'undefined') {
-        throw new IllegalArgument("Passed Tag must have a title set.");
-    }
-
-    return 'https://m.tiktok.com/api/challenge/detail/?challengeName=' + identifier.title
-            + '&language=en';
+    return `https://m.tiktok.com/api/challenge/detail/?agent_user=&challengeId=${uniqueId}`;
 }
 
 export function getTagTopContentURL(tag: Tag, count: number, startCur: string): string {
@@ -82,6 +74,5 @@ export function getTagTopContentURL(tag: Tag, count: number, startCur: string): 
         throw new IllegalArgument("Passed Tag must have an id set.");
     }
 
-    return 'https://m.tiktok.com/share/item/list?secUid=&id=' + tag.id + '&type=' 
-            + TYPE_TAG_VIDEOS + '&count=' + count + '&minCursor=0&maxCursor=' + startCur + '&shareUid=';
+    return `https://m.tiktok.com/api/challenge/item_list/?aid=1988&user_agent=&challengeID=${tag.id}&count=${count}&cursor=${startCur}`;
 }
